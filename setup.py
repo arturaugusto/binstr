@@ -30,6 +30,16 @@ Binstr - A collection of utility functions for creating and operating on
          It is useful to use these functions to make small bugs in your code
          easier to find since all inputs are checked thoroughly for errors
          using assertions.
+         
+int_to_b() is a lot more flexible than the built in bin() function although
+bin() is used internally. It allows you to force a width, change what bits are
+chopped off, change the alignment and change the bit endianness.
+
+The bit endianness is particularly useful for creating binary shuffles. E.g.
+from math import log
+length = 256
+shuffle = [int( int_to_b(i, width=int(log(length, 2)), endian='little') , 2)
+           for i in range(length)]
 
 Includes:
 int_to_b()  - Convert a positive integer to a sting of binary
