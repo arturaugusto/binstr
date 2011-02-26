@@ -1,13 +1,17 @@
 from distutils.core import setup
+
+long_desc = open('README.txt').read()
+
 setup(
     name                = 'binstr',
-    version             = '1.0',
+    version             = '1.1',
     py_modules          = ['binstr'],
     description         = 'Utility functions for strings of binary digits',
     author              = 'David McEwan',
     author_email        = 'dmcewa15@caledonian.ac.uk',
     license             = 'GLPv3',
     platforms           = 'Python >2.6 including 3.x (OS Independent)',
+    url                 = 'https://github.com/DavidMcEwan/binstr',
     
     classifiers         = [
         'Programming Language :: Python',
@@ -23,39 +27,5 @@ setup(
         'Development Status :: 5 - Production/Stable'
                           ],
     
-    long_description    = '''
-Binstr - A collection of utility functions for creating and operating on
-         strings of binary digits. It is compatible with Python versions >2.6
-         including 3.x.
-         It is useful to use these functions to make small bugs in your code
-         easier to find since all inputs are checked thoroughly for errors
-         using assertions.
-         
-int_to_b() is a lot more flexible than the built in bin() function although
-bin() is used internally. It allows you to force a width, change what bits are
-chopped off, change the alignment and change the bit endianness.
-
-The bit endianness is particularly useful for creating binary shuffles. E.g.
-from math import log
-length = 256
-shuffle = [int( int_to_b(i, width=int(log(length, 2)), endian='little') , 2)
-           for i in range(length)]
-
-Includes:
-int_to_b()  - Convert a positive integer to a sting of binary
-              e.g. int_to_b(5) -> '00000101'
-frac_to_b() - Convert a positive fraction to a string of binary
-              e.g. frac_to_b(0.5) -> '10000000'
-
-b_and()  - Perform a bitwise AND
-b_or()   - Perform a bitwise OR
-b_xor()  - Perform a bitwise XOR
-b_nand() - Perform a bitwise NAND
-b_nor()  - Perform a bitwise NOR
-b_nxor() - Perform a bitwise NXOR
-b_not()  - Perform a bitwise NOT (inversion)
-
-b_add()  - Perform an ADD operation
-b_mul()  - Perform a MUL operation (multiply)
-                          '''.rstrip()
+    long_description    = long_desc
      )
