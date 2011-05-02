@@ -560,6 +560,82 @@ def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity=
 
 # }}} End of Convertions To Binary Strings
 
+# Gray Conversion {{{
+
+def b_bin_to_gray(A='00000000', endian='big'): # {{{
+    '''
+    Convert from binary coding to Gray coding.
+    
+    The returned string will always be the same length as the input string.
+    Both the input and output strings will have the same bit-endianness,
+      which can be specifed with the endian argument.
+    
+    E.g. b_bin_to_gray() returns '00000000'
+         b_bin_to_gray('1111') returns '1000'
+         b_bin_to_gray('1101', endian='big') returns '1011'
+         b_bin_to_gray('1101', endian='little') returns '0111'
+    '''
+    assert type(A) is str, 'A is not a string: %s' % str(A)
+    assert type(endian) is str,  'endian is not a string: %s'  % str(endian)
+    
+    assert len(A) >= 1, 'A has no digits'
+    assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % endian
+    
+    from re import compile as re_compile
+    pattern = re_compile('[^01]')
+    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
+    del re_compile, pattern
+    
+    if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
+    
+    g = A[0]
+    for i in range(1, len(A)): g += str( int(A[i-1] != A[i]) )
+    
+    assert len(A) == len(g), 'Error in this function! len(A) must equal len(g). Oh dear.'
+    
+    if endian == 'little': g = g[::-1] # Convert back to little endian if necessary
+    
+    return g
+    # }}} End of b_to_gray()
+
+def b_gray_to_bin(A='00000000', endian='big'): # {{{
+    '''
+    Convert from Gray coding to binary coding.
+    
+    The returned string will always be the same length as the input string.
+    Both the input and output strings will have the same bit-endianness,
+      which can be specifed with the endian argument.
+    
+    E.g. b_gray_to_bin() returns '00000000'
+         b_gray_to_bin('1111') returns '1010'
+         b_gray_to_bin('1101', endian='big') returns '1001'
+         b_gray_to_bin('1101', endian='little') returns '1011'
+    '''
+    assert type(A) is str, 'A is not a string: %s' % str(A)
+    assert type(endian) is str,  'endian is not a string: %s'  % str(endian)
+    
+    assert len(A) >= 1, 'A has no digits'
+    assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % endian
+    
+    from re import compile as re_compile
+    pattern = re_compile('[^01]')
+    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
+    del re_compile, pattern
+    
+    if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
+    
+    b = A[0]
+    for i in range(1, len(A)): b += str( int(b[i-1] != A[i]) )
+    
+    assert len(A) == len(b), 'Error in this function! len(A) must equal len(b). Oh dear.'
+    
+    if endian == 'little': b = b[::-1] # Convert back to little endian if necessary
+    
+    return b
+    # }}} End of gray_to_b()
+
+# }}} End of Gray Conversion
+
 # Arithmetic Operations {{{
 
 def b_add(A='00000000', B='00000000', endian='big'): # {{{
@@ -766,16 +842,36 @@ def run_self_test(): # {{{
     print(str_to_b.__doc__)
     print('\tTests:')
     print('\tstr_to_b() = %s'                                       % str_to_b()                                    )
-    print('\tstr_to_b(\'\\x00\') = %s'                               % str_to_b('\x00')                              )
+    print('\tstr_to_b(\'\\x00\') = %s'                              % str_to_b('\x00')                              )
     print('\tstr_to_b(\'abc\') = %s'                                % str_to_b('abc')                               )
     print('\tstr_to_b(\'U\') = %s'                                  % str_to_b('U')                                 )
     print('\tstr_to_b(\'U\', endian=\'little\') = %s'               % str_to_b('U', endian='little')                )
     print('\tstr_to_b(\'U\', char_width=7) = %s'                    % str_to_b('U', char_width=7)                   )
     print('\tstr_to_b(\'U\', prefix=\'1111\', suffix=\'0000\') = %s'% str_to_b('U', prefix='1111', suffix='0000')   )
-    print('\tstr_to_b(\'\\x00\', parity=\'pO\') = %s'                % str_to_b('\x00', parity='pO')                 )
+    print('\tstr_to_b(\'\\x00\', parity=\'pO\') = %s'               % str_to_b('\x00', parity='pO')                 )
     print('\tstr_to_b(\'U\', parity=\'sE\') = %s'                   % str_to_b('U', parity='sE')                    )
     
     # }}} End of Convertions To Binary Strings
+    
+    # Gray Conversion {{{
+    
+    print('\nb_bin_to_gray()...')
+    print(b_bin_to_gray.__doc__)
+    print('\tTests:')
+    print('\tb_bin_to_gray() = %s'                                  % b_bin_to_gray()                               )
+    print('\tb_bin_to_gray(\'1111\') = %s'                          % b_bin_to_gray('1111')                         )
+    print('\tb_bin_to_gray(\'1101\', endian=\'big\') = %s'          % b_bin_to_gray('1101', endian='big')           )
+    print('\tb_bin_to_gray(\'1101\', endian=\'little\') = %s'       % b_bin_to_gray('1101', endian='little')        )
+    
+    print('\nb_gray_to_bin()...')
+    print(b_gray_to_bin.__doc__)
+    print('\tTests:')
+    print('\tb_gray_to_bin() = %s'                                  % b_gray_to_bin()                               )
+    print('\tb_gray_to_bin(\'1111\') = %s'                          % b_gray_to_bin('1111')                         )
+    print('\tb_gray_to_bin(\'1101\', endian=\'big\') = %s'          % b_gray_to_bin('1101', endian='big')           )
+    print('\tb_gray_to_bin(\'1101\', endian=\'little\') = %s'       % b_gray_to_bin('1101', endian='little')        )
+    
+    # }}} End of Gray Conversion
     
     # Arithmetic Operations {{{
     

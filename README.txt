@@ -7,30 +7,33 @@ Binstr - A collection of utility functions for creating and operating on
 
 
 Includes:
-    int_to_b()  - Convert a positive integer to a sting of binary
-                  e.g. int_to_b(5) -> '00000101'
-    frac_to_b() - Convert a positive fraction to a string of binary
-                  e.g. frac_to_b(0.5) -> '10000000'
-    str_to_b() -  Convert an ASCII string of characters to a string of binary
-                  e.g. str_to_b('abc') -> '011000010110001001100011' 
+    int_to_b()      - Convert a positive integer to a sting of binary
+                      e.g. int_to_b(5) -> '00000101'
+    frac_to_b()     - Convert a positive fraction to a string of binary
+                      e.g. frac_to_b(0.5) -> '10000000'
+    str_to_b()      - Convert an ASCII string of characters to a string of binary
+                      e.g. str_to_b('abc') -> '011000010110001001100011' 
     
-    b_land()  - Perform a logical AND
-    b_lor()   - Perform a logical OR
-    b_lxor()  - Perform a logical XOR
-    b_lnand() - Perform a logical NAND
-    b_lnor()  - Perform a logical NOR
-    b_lnxor() - Perform a logical NXOR
+    b_land()        - Perform a logical AND
+    b_lor()         - Perform a logical OR
+    b_lxor()        - Perform a logical XOR
+    b_lnand()       - Perform a logical NAND
+    b_lnor()        - Perform a logical NOR
+    b_lnxor()       - Perform a logical NXOR
     
-    b_and()  - Perform a bitwise AND
-    b_or()   - Perform a bitwise OR
-    b_xor()  - Perform a bitwise XOR
-    b_nand() - Perform a bitwise NAND
-    b_nor()  - Perform a bitwise NOR
-    b_nxor() - Perform a bitwise NXOR
-    b_not()  - Perform a bitwise NOT (inversion)
+    b_and()         - Perform a bitwise AND
+    b_or()          - Perform a bitwise OR
+    b_xor()         - Perform a bitwise XOR
+    b_nand()        - Perform a bitwise NAND
+    b_nor()         - Perform a bitwise NOR
+    b_nxor()        - Perform a bitwise NXOR
+    b_not()         - Perform a bitwise NOT (inversion)
     
-    b_add()  - Perform an ADD operation
-    b_mul()  - Perform a MUL operation (multiply)
+    b_bin_to_gray() - Convert binary code into gray code
+    b_gray_to_bin() - Convert gray code into binary code
+    
+    b_add()         - Perform an ADD operation
+    b_mul()         - Perform a MUL operation (multiply)
 
 int_to_b() is a lot more flexible than the built in bin() function although
 bin() is used internally. It allows you to force a width, change what bits are
@@ -63,3 +66,4 @@ cd to this directory (where README.txt and setup.py are) then run:
 python setup.py install
 
 Note: This may need to be run with root (admin) priviliges.
+
