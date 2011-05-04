@@ -5,6 +5,8 @@ Binstr - A collection of utility functions for creating and operating on
          easier to find since all inputs are checked thoroughly for errors
          using assertions.
 
+PyPI may not always have the latest version.
+The latest version can always be found on the GitHub page (https://github.com/DavidMcEwan/binstr).
 
 Includes:
     int_to_b()      - Convert a positive integer to a sting of binary
