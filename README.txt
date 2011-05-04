@@ -34,6 +34,8 @@ Includes:
     
     b_add()         - Perform an ADD operation
     b_mul()         - Perform a MUL operation (multiply)
+    
+    b_blockify()    - Separate a string of binary into clocks
 
 int_to_b() is a lot more flexible than the built in bin() function although
 bin() is used internally. It allows you to force a width, change what bits are

@@ -716,6 +716,65 @@ def b_mul(A='00000000', B='00000000', endian='big'): # {{{
 
 # }}} End of Arithmetic Operations
 
+# Miscellaneous Functions {{{
+
+def b_blockify(A='', size=4, sep=' ', pad='', align='left'): # {{{
+    '''
+    Separate a string of binary digits into blocks.
+    
+    The size of the block is 4 by default but can be specified as any
+      positive integer greater than 0.
+    The alignment of the string can be specified as either left or right,
+      and is left by default.
+    The separating character is a space be default but can be specified
+      as an arbitrary string (not required to be just a single character).
+    There is no padding character by default but can also be specified as
+      an arbitrary string.
+    
+    If the input is an empty string then an empty string will be returned.
+    
+    E.g. b_blockify() returns ''
+         b_blockify('00000000') returns '0000 0000'
+         b_blockify('0'*9) returns '0000 0000 0'
+         b_blockify('0'*9, pad='x') returns '0000 0000 0xxx'
+         b_blockify('0'*9, pad='x', align='right') returns 'xxx0 0000 0000'
+         b_blockify('0'*9, sep='_') returns '0000_0000_0'
+         b_blockify('0'*9, size='3') returns '000 000 000'
+    '''
+    assert type(A) is str, 'A is not a string: %s' % str(A)
+    assert type(size)  is int,  'size is not an integer: %s' % str(size)
+    assert type(sep) is str, 'sep is not a string: %s' % str(sep)
+    assert type(pad) is str, 'pad is not a string: %s' % str(pad)
+    assert type(align) is str, 'align is not a string: %s' % str(align)
+    
+    assert size > 0, 'size is not a positive integer greater than zero: %d' % size
+    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
+    
+    from re import compile as re_compile
+    pattern = re_compile('[^01]')
+    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % str(A)
+    del re_compile, pattern
+    
+    if align == 'right': A = A[::-1]                                    # This is the most simple way to deal with alignment
+    
+    t = ''
+    lenA = len(A)                                                       # Pre-calculate this to save doing it every iteration
+    for i, c in enumerate(A):
+        t += c
+        if ((i + 1 + size) % size == 0) and (i < (lenA - 1)): t += sep  # Add separator
+        del i, c
+    
+    t += pad*((size - (lenA % size)) % size)                            # Add padding
+    
+    del A, lenA
+
+    if align == 'right': t = t[::-1]                                    # Correct alignment
+    
+    return t
+    # }}} End of b_blockify()
+
+# }}} End of Miscellaneous Functions
+
 def run_self_test(): # {{{
     
     # Bitwise Operations {{{
@@ -890,6 +949,21 @@ def run_self_test(): # {{{
     print('\tb_mul(\'0001\', \'0001\', endian=\'little\') = %s'       % b_mul('0001', '0001', endian='little')      )
     
     # }}} End of Arithmetic Operations
+    
+    # Miscellaneous Functions {{{
+    
+    print('\nb_blockify()...')
+    print(b_blockify.__doc__)
+    print('\tTests:')
+    print('\tb_blockify() = %s'                                       % b_blockify()                                )
+    print('\tb_blockify(\'00000000\') = %s'                           % b_blockify('00000000')                      )
+    print('\tb_blockify(\'0\'*9) = %s'                                % b_blockify('0'*9)                           )
+    print('\tb_blockify(\'0\'*9, pad=\'x\') = %s'                     % b_blockify('0'*9, pad='x')                  )
+    print('\tb_blockify(\'0\'*9, pad=\'x\', align=\'right\') = %s'    % b_blockify('0'*9, pad='x', align='right')   )
+    print('\tb_blockify(\'0\'*9, sep=\'_\') = %s'                     % b_blockify('0'*9, sep='_')                  )
+    print('\tb_blockify(\'0\'*9, size=3) = %s'                        % b_blockify('0'*9, size=3)                   )
+    
+    # }}} End of Miscellaneous Functions
     
 # }}} End of run_self_test()
 
