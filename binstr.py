@@ -773,6 +773,35 @@ def b_blockify(A='', size=4, sep=' ', pad='', align='left'): # {{{
     return t
     # }}} End of b_blockify()
 
+def b_validate(A='', fail_empty=True): # {{{
+    '''
+    Validate that a given string contains only 0s and 1s.
+    
+    This will return True if the string is valid, otherwise it returns False.
+    
+    E.g. b_validate() returns False
+         b_validate('') returns False
+         b_validate('', fail_empty=False) returns True
+         b_validate('01010101') returns True
+         b_validate('010120101') returns False
+         b_validate('0101 0101') returns False
+    '''
+    # Assertions cannot be used in here because when optimisation is turned on they
+    #   will be compiled out.
+    t = True
+    
+    if t and not(type(A) is str): t = False
+    if t and fail_empty and not(len(A) > 0): t = False
+    
+    if t:
+        from re import compile as re_compile
+        pattern = re_compile('[^01]')
+        t = not( bool(pattern.search(A)) )
+        del re_compile, pattern
+    
+    return t
+    # }}} End of b_validate()
+
 # }}} End of Miscellaneous Functions
 
 def run_self_test(): # {{{
@@ -962,6 +991,16 @@ def run_self_test(): # {{{
     print('\tb_blockify(\'0\'*9, pad=\'x\', align=\'right\') = %s'      % b_blockify('0'*9, pad='x', align='right')     )
     print('\tb_blockify(\'0\'*9, sep=\'_\') = %s'                       % b_blockify('0'*9, sep='_')                    )
     print('\tb_blockify(\'0\'*9, size=3) = %s'                          % b_blockify('0'*9, size=3)                     )
+    
+    print('\nb_validate()...')
+    print(b_validate.__doc__)
+    print('\tTests:')
+    print('\tb_validate() = %s'                                         % b_validate()                                  )
+    print('\tb_validate(\'\') = %s'                                     % b_validate('')                                )
+    print('\tb_validate(\'\', fail_empty=False) = %s'                   % b_validate('', fail_empty=False)              )
+    print('\tb_validate(\'01010101\') = %s'                             % b_validate('01010101')                        )
+    print('\tb_validate(\'010120101\') = %s'                            % b_validate('010120101')                       )
+    print('\tb_validate(\'0101 0101\') = %s'                            % b_validate('0101 0101')                       )
     
     # }}} End of Miscellaneous Functions
     

@@ -38,6 +38,7 @@ Includes:
     b_mul()         - Perform a MUL operation (multiply)
     
     b_blockify()    - Separate a string of binary into blocks
+    b_validate()    - Validate that a given string contains only 0s and 1s
 
 int_to_b() is a lot more flexible than the built in bin() function although
 bin() is used internally. It allows you to force a width, change what bits are
