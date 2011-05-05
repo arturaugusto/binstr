@@ -42,19 +42,11 @@ def b_and(A='00000000', B='00000000', align='right'): #{{{
          b_and('01010000', '0011') returns '00000000'
          b_and('01010000', '0011', align='left') returns '00010000'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert type(B) is str, 'B is not a string: %s' % str(B)
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
     assert type(align) is str, 'align is not a string: %s' % str(align)
     
-    assert len(A) >= 1, 'A has no digits'
-    assert len(B) >= 1, 'B has no digits'
     assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    assert bool(pattern.search(B)) == False, 'Invalid B: "%s". Must only contain "0"s or "1"s.' % B
-    del re_compile, pattern
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -77,19 +69,11 @@ def b_nand(A='00000000', B='00000000', align='right'): #{{{
          b_and('01010000', '0011') returns '11111111'
          b_and('01010000', '0011', align='left') returns '11101111'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert type(B) is str, 'B is not a string: %s' % str(B)
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
     assert type(align) is str, 'align is not a string: %s' % str(align)
     
-    assert len(A) >= 1, 'A has no digits'
-    assert len(B) >= 1, 'B has no digits'
     assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    assert bool(pattern.search(B)) == False, 'Invalid B: "%s". Must only contain "0"s or "1"s.' % B
-    del re_compile, pattern
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -112,19 +96,11 @@ def b_or(A='00000000', B='00000000', align='right'): # {{{
          b_or('01010000', '0011') returns '01010011'
          b_or('01010000', '0011', align='left') returns '01110000'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert type(B) is str, 'B is not a string: %s' % str(B)
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
     assert type(align) is str, 'align is not a string: %s' % str(align)
     
-    assert len(A) >= 1, 'A has no digits'
-    assert len(B) >= 1, 'B has no digits'
     assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    assert bool(pattern.search(B)) == False, 'Invalid B: "%s". Must only contain "0"s or "1"s.' % B
-    del re_compile, pattern
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -147,19 +123,11 @@ def b_nor(A='00000000', B='00000000', align='right'): # {{{
          b_or('01010000', '0011') returns '10101100'
          b_or('01010000', '0011', align='left') returns '10001111'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert type(B) is str, 'B is not a string: %s' % str(B)
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
     assert type(align) is str, 'align is not a string: %s' % str(align)
     
-    assert len(A) >= 1, 'A has no digits'
-    assert len(B) >= 1, 'B has no digits'
     assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    assert bool(pattern.search(B)) == False, 'Invalid B: "%s". Must only contain "0"s or "1"s.' % B
-    del re_compile, pattern
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -182,19 +150,11 @@ def b_xor(A='00000000', B='00000000', align='right'): # {{{
          b_or('01010000', '0011') returns '01010011'
          b_or('01010000', '0011', align='left') returns '01100000'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert type(B) is str, 'B is not a string: %s' % str(B)
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
     assert type(align) is str, 'align is not a string: %s' % str(align)
     
-    assert len(A) >= 1, 'A has no digits'
-    assert len(B) >= 1, 'B has no digits'
     assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    assert bool(pattern.search(B)) == False, 'Invalid B: "%s". Must only contain "0"s or "1"s.' % B
-    del re_compile, pattern
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -217,19 +177,11 @@ def b_nxor(A='00000000', B='00000000', align='right'): # {{{
          b_or('01010000', '0011') returns '10101100'
          b_or('01010000', '0011', align='left') returns '10011111'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert type(B) is str, 'B is not a string: %s' % str(B)
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
     assert type(align) is str, 'align is not a string: %s' % str(align)
     
-    assert len(A) >= 1, 'A has no digits'
-    assert len(B) >= 1, 'B has no digits'
     assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    assert bool(pattern.search(B)) == False, 'Invalid B: "%s". Must only contain "0"s or "1"s.' % B
-    del re_compile, pattern
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -249,13 +201,7 @@ def b_not(A='00000000'): # {{{
     E.g. b_or('0101') returns '1010'
          b_or() returns '11111111'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert len(A) >= 1, 'A has no digits'
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    del re_compile, pattern
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
     
     return ''.join([str(int( not( bool(int(a)) ) )) for a in A])
     # }}} End of b_not()
@@ -273,13 +219,7 @@ def b_land(A='0'): #{{{
          b_and('01010000') returns '0'
          b_and('00000000') returns '0'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert len(A) >= 1, 'A has no digits'
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    del re_compile, pattern
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
     
     if len(A) >= 1 and A.find('0') < 0: return '1'
     else: return '0'
@@ -294,14 +234,8 @@ def b_lnand(A='0'): #{{{
          b_and('01010000') returns '1'
          b_and('00000000') returns '1'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert len(A) >= 1, 'A has no digits'
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    del re_compile, pattern
-    
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+       
     if len(A) >= 1 and A.find('0') < 0: return '0'
     else: return '1'
     # }}} End of b_lnand()
@@ -315,13 +249,7 @@ def b_lor(A='0'): #{{{
          b_and('01010000') returns '1'
          b_and('00000000') returns '0'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert len(A) >= 1, 'A has no digits'
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    del re_compile, pattern
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
     
     if len(A) >= 1 and A.find('1') < 0: return '0'
     else: return '1'
@@ -336,13 +264,7 @@ def b_lnor(A='0'): #{{{
          b_and('01010000') returns '0'
          b_and('00000000') returns '1'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert len(A) >= 1, 'A has no digits'
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    del re_compile, pattern
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
     
     if len(A) >= 1 and A.find('1') < 0: return '1'
     else: return '0'
@@ -359,13 +281,7 @@ def b_lxor(A='0'): #{{{
          b_and('00000001') returns '1'
          b_and('00000000') returns '0'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert len(A) >= 1, 'A has no digits'
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    del re_compile, pattern
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
     
     if len(A) >= 1 and A.count('1') % 2 == 0: return '0'
     else: return '1'
@@ -382,13 +298,7 @@ def b_lnxor(A='0'): #{{{
          b_and('00000001') returns '0'
          b_and('00000000') returns '1'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert len(A) >= 1, 'A has no digits'
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    del re_compile, pattern
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
     
     if len(A) >= 1 and A.count('1') % 2 == 0: return '1'
     else: return '0'
@@ -417,7 +327,7 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
       the base to 2 e.g.:'int( int_to_b(...) , 2 )'.
        
     E.g. int_to_b() returns '00000000'
-         int_to_b(5) returns '0101'
+         int_to_b(5) returns '00000101'
          int_to_b(0xF5, width=10, endian='little') returns '1010111100'
          int_to_b(0xF5, width=7) returns '1110101'
          int_to_b(0xF5, width=7, chop='least') returns '1111010'
@@ -518,8 +428,8 @@ def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity=
     assert type(instr) is str,          'instr is not a string: %s'         % str(instr)
     assert type(char_width)  is int,    'char_width is not an integer: %s'  % str(char_width)
     assert type(endian) is str,         'endian is not a string: %s'        % str(endian)
-    assert type(prefix) is str,         'prefix is not a string: %s'        % str(prefix)
-    assert type(suffix) is str,         'suffix is not a string: %s'        % str(suffix)
+    assert b_validate(prefix, fail_empty=False) == True, 'prefix is not a valid b_string: %s' % str(prefix)
+    assert b_validate(suffix, fail_empty=False) == True, 'suffix is not a valid b_string: %s' % str(suffix)
     assert type(parity) is str,         'parity is not a string: %s'        % str(parity)
     
     for (i, c) in enumerate(instr):
@@ -532,12 +442,6 @@ def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity=
            parity == 'sO' or \
            parity == 'pE' or \
            parity == 'sE', 'Invalid prefix: "%s".' % str(prefix)
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(prefix)) == False, 'Invalid prefix: "%s". Must only contain "0"s or "1"s.' % prefix
-    assert bool(pattern.search(suffix)) == False, 'Invalid suffix: "%s". Must only contain "0"s or "1"s.' % suffix
-    del re_compile, pattern
     
     t = ''
     for c in (instr):
@@ -575,16 +479,10 @@ def b_bin_to_gray(A='00000000', endian='big'): # {{{
          b_bin_to_gray('1101', endian='big') returns '1011'
          b_bin_to_gray('1101', endian='little') returns '0111'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
     assert type(endian) is str,  'endian is not a string: %s'  % str(endian)
     
-    assert len(A) >= 1, 'A has no digits'
     assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % endian
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    del re_compile, pattern
     
     if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
     
@@ -611,16 +509,10 @@ def b_gray_to_bin(A='00000000', endian='big'): # {{{
          b_gray_to_bin('1101', endian='big') returns '1001'
          b_gray_to_bin('1101', endian='little') returns '1011'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
     assert type(endian) is str,  'endian is not a string: %s'  % str(endian)
     
-    assert len(A) >= 1, 'A has no digits'
     assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % endian
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % A
-    del re_compile, pattern
     
     if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
     
@@ -653,19 +545,11 @@ def b_add(A='00000000', B='00000000', endian='big'): # {{{
          b_add('0001', '0001') returns '00010'
          b_add('0001', '0001', endian='little') returns '00001'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert type(B) is str, 'B is not a string: %s' % str(B)
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
     assert type(endian) is str, 'endian is not a string: %s' % str(endian)
     
-    assert len(A) >= 1, 'A has no digits'
-    assert len(B) >= 1, 'B has no digits'
     assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % str(endian)
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % str(A)
-    assert bool(pattern.search(B)) == False, 'Invalid B: "%s". Must only contain "0"s or "1"s.' % B
-    del re_compile, pattern
     
     if endian == 'little':                     # Ensure both inputs are big endian before the add 
         A = A[::-1]
@@ -690,19 +574,11 @@ def b_mul(A='00000000', B='00000000', endian='big'): # {{{
          b_mul('0001', '0001') returns '00000001'
          b_mul('0001', '0001', endian='little') returns '00000010'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
-    assert type(B) is str, 'B is not a string: %s' % str(B)
+    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
     assert type(endian) is str, 'endian is not a string: %s' % str(endian)
     
-    assert len(A) >= 1, 'A has no digits'
-    assert len(B) >= 1, 'B has no digits'
     assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % str(endian)
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % str(A)
-    assert bool(pattern.search(B)) == False, 'Invalid B: "%s". Must only contain "0"s or "1"s.' % B
-    del re_compile, pattern
     
     if endian == 'little':                     # Ensure both inputs are big endian before the add 
         A = A[::-1]
@@ -741,7 +617,7 @@ def b_blockify(A='', size=4, sep=' ', pad='', align='left'): # {{{
          b_blockify('0'*9, sep='_') returns '0000_0000_0'
          b_blockify('0'*9, size='3') returns '000 000 000'
     '''
-    assert type(A) is str, 'A is not a string: %s' % str(A)
+    assert b_validate(A, fail_empty=False) == True, 'A is not a valid b_string: %s' % str(A)
     assert type(size)  is int,  'size is not an integer: %s' % str(size)
     assert type(sep) is str, 'sep is not a string: %s' % str(sep)
     assert type(pad) is str, 'pad is not a string: %s' % str(pad)
@@ -749,11 +625,6 @@ def b_blockify(A='', size=4, sep=' ', pad='', align='left'): # {{{
     
     assert size > 0, 'size is not a positive integer greater than zero: %d' % size
     assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
-    
-    from re import compile as re_compile
-    pattern = re_compile('[^01]')
-    assert bool(pattern.search(A)) == False, 'Invalid A: "%s". Must only contain "0"s or "1"s.' % str(A)
-    del re_compile, pattern
     
     if align == 'right': A = A[::-1]                                    # This is the most simple way to deal with alignment
     
@@ -926,7 +797,7 @@ def run_self_test(): # {{{
     print('\tfrac_to_b(0.3, 5) = %s'                                    % frac_to_b(0.3, 5)                             )
     print('\tfrac_to_b(0.5, width=10, endian=\'little\') = %s'          % frac_to_b(0.5, width=10, endian='little')     )
     
-    print('\str_to_b()...')
+    print('\nstr_to_b()...')
     print(str_to_b.__doc__)
     print('\tTests:')
     print('\tstr_to_b() = %s'                                           % str_to_b()                                    )
