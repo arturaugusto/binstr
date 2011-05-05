@@ -29,6 +29,13 @@
 #   C and Assembler.
 # Obviously the other main use would be if you already have strings of
 #   binary that you need to fiddle with.
+#
+# Implementation Notes:
+# The term b_string is used to refer to a string containing only 0s and 1s.
+# In functions the letters A and B always refers to an input b_string.
+# The variable t used in most functions stands for temporary.
+# In the gray conversion functions the variables b and g are used instead of
+#   t for clarity.
 
 # Bitwise Operations {{{
 
