@@ -509,7 +509,7 @@ def b_bin_to_gray(A='00000000', endian='big'): # {{{
     if endian == 'little': g = g[::-1] # Convert back to little endian if necessary
     
     return g
-    # }}} End of b_to_gray()
+    # }}} End of b_bin_to_gray()
 
 def b_gray_to_bin(A='00000000', endian='big'): # {{{
     '''
@@ -539,7 +539,7 @@ def b_gray_to_bin(A='00000000', endian='big'): # {{{
     if endian == 'little': b = b[::-1] # Convert back to little endian if necessary
     
     return b
-    # }}} End of gray_to_b()
+    # }}} End of b_gray_to_bin()
 
 # }}} End of Gray Conversion
 
