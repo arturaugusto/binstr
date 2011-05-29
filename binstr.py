@@ -347,7 +347,7 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
          int_to_b(0xF5, width=7) returns '1110101'
          int_to_b(0xF5, width=7, chop='least') returns '1111010'
     '''
-    assert type(num)    is int,  'num is not an integer: %s'   % str(num)
+    assert type(num) is int or type(num) is long,  'num is not an integer: %s' % str(num)
     assert type(width)  is int,  'width is not an integer: %s' % str(width)
     assert type(endian) is str,  'endian is not a string: %s'  % str(endian)
     assert type(chop)   is str,  'chop is not a string: %s'    % str(chop)
@@ -688,6 +688,121 @@ def b_validate(A='', fail_empty=True): # {{{
     return t
     # }}} End of b_validate()
 
+def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad='0'): # {{{
+    '''
+    Convert from binary coding to BaseX coding.
+    
+    The input string will ALWAYS be padded out to a multiple of 8 bits.
+    The alignment of this padding can be controlled with the align argument,
+      which can either be 'left' (default) or 'right'.
+    The padding digit can be controlled be the b_pad argument which can either
+      be '0' (default) or '1'.
+    
+    The base used can either be 4, 8, 16, 32 or 64 (default) and is controlled
+      by the base argument.
+    A user-defined alphabet can be supplied containing any characters in any
+      order as long at the length is equal to the base using the alphabet
+      argument.
+    Supplying an empty input string will return in the alphabet which is used
+      for that base.
+    The default alphabets for bases 32 and 64 are taken from RCF 3548 and
+      the alphabets used for bases 4, 8 and 16 are standard.
+    Note that base 32 in RFC 3548 is not compatible with Python's
+      int(<input_string>, 32) function which uses 0-9,A-V.
+    The highest base that Python's int() function supports is 36 (0-9,A-Z).
+    
+    The padding character is '=' by default though this can be changed with the
+      pad argument.
+    This padding can be turned off by setting pad to an empty string.
+    
+    E.g. b_to_baseX() returns 'AA=='
+         b_to_baseX('') returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+         b_to_baseX('', base=4) returns '0123'
+         b_to_baseX('', base=8) returns '01234567'
+         b_to_baseX('', base=16) returns '0123456789ABCDEF'
+         b_to_baseX('', base=32) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+         b_to_baseX('', base=64) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+         b_to_baseX('00011011', base=4) returns '0123'
+         b_to_baseX('000110111', base=4) returns '01232000'
+         b_to_baseX('0001101110', base=4) returns '01232000'
+         b_to_baseX('000001010011100101110111', base=8) returns '01234567'
+         b_to_baseX('0000010110101111', base=16) returns '05AF'
+         b_to_baseX('0000010110101111', base=32) returns 'AWXQ==='
+         b_to_baseX(int_to_b(int('14FB9C03D97E', 16), width=48)) returns 'FPucA9l+'
+         b_to_baseX(int_to_b(int('14FB9C03D9', 16), width=40)) returns 'FPucA9k='
+         b_to_baseX(int_to_b(int('14FB9C03', 16), width=32)) returns 'FPucAw=='
+         b_to_baseX(int_to_b(int('14FB9C03', 16), width=32), pad='') returns 'FPucAw'
+         b_to_baseX('00011011', base=4, alphabet='abcd') returns 'abcd'
+    '''
+    
+    # These are the default alphabets.
+    # 4 is standard radix-4 notation.
+    # 8 is standard octal notation.
+    # 16 is standard hexadecimal notation (uppercase). This also appears in RFC 3548.
+    # 32 and 64 are taken from RFC 3548.
+    base_alphabets = {
+                      '4'  : '0123',
+                      '8'  : '01234567',
+                      '16' : '0123456789ABCDEF',
+                      '32' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',
+                      '64' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+                     }
+    
+    assert b_validate(A, fail_empty=False) == True, 'A is not a valid b_string: %s' % str(A)
+    assert type(base) is int, 'base is not a positive integer: %s'  % str(base)
+    assert type(pad) is str, 'pad is not a string: %s'  % str(pad)
+    assert type(alphabet) is str, 'alphabet is not a string: %s'  % str(alphabet)
+    assert type(align) is str, 'align is not a string: %s' % str(align)
+    assert type(b_pad) is str, 'b_pad is not a string: %s' % str(b_pad)
+    
+    assert base in [4, 8, 16, 32, 64], 'base must be either 4, 8, 16, 32 or 64: %d' % base
+    assert len(pad) <= 1, 'pad is more that one character long: %s' % pad
+    
+    if not len(alphabet): alphabet = base_alphabets[str(base)] # Allow user to specify their own alphabet else use default.
+    assert len(alphabet) == base, 'alphabet is not %d characters long: %s' % (base, alphabet)
+    
+    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
+    assert b_pad == '0' or b_pad == '1', 'Invalid b_pad: "%s". Use either "0" or "1"' % b_pad
+    
+    # Return the active alphabet on empty input string.
+    if not len(A): return alphabet
+    
+    from math import log, floor
+    bits_per_char = int(floor(log(base, 2))) # Calculate the number of bits each character will represent.
+    del log, floor
+    
+    bits_per_byte = 8 # Yes. this is obvious but I think it makes the following code more readable.
+    
+    # Calculate lowest common multiple using Euclid's method which is the group size in bits.
+    a = bits_per_char
+    b = bits_per_byte
+    c = a * b
+    while b: a, b = b, a % b
+    group_size_bits = c / a                                 # Number of bits in each group
+    group_size_bytes = group_size_bits / bits_per_byte      # Number of bytes per group
+    del a, b, c, group_size_bits
+    
+    # Pad out the input b_string to be a multiple of 8 (bits_per_byte) bits long.
+    lA = len(A)
+    if align == 'left': A = A + b_pad * ((bits_per_byte - (lA % bits_per_byte)) % bits_per_byte)
+    else:               A = b_pad * ((bits_per_byte - (lA % bits_per_byte)) % bits_per_byte) + A
+    lA = len(A)
+    
+    # Make a temporary A sting which is padded on the right with zeros to make it a multiple of bits_per_char bits.
+    Ac = A + '0' * ((bits_per_char - (lA % bits_per_char)) % bits_per_char)
+    lA_c = len(Ac)
+    
+    # Generate string of new base.
+    t = ''
+    for i in range(0, lA_c, bits_per_char): t += alphabet[int(Ac[i:i+bits_per_char], 2)]
+    del i, A, Ac, lA_c, bits_per_char
+    
+    # Add padding
+    if len(pad): t += pad * ((group_size_bytes - ((lA / bits_per_byte) % group_size_bytes)) % group_size_bytes)
+    
+    return t
+    # }}} End of b_to_baseX()
+
 # }}} End of Miscellaneous Functions
 
 def run_self_test(): # {{{
@@ -887,6 +1002,32 @@ def run_self_test(): # {{{
     print('\tb_validate(\'01010101\') = %s'                             % b_validate('01010101')                        )
     print('\tb_validate(\'010120101\') = %s'                            % b_validate('010120101')                       )
     print('\tb_validate(\'0101 0101\') = %s'                            % b_validate('0101 0101')                       )
+    
+    print('\nb_to_baseX()...')
+    print(b_to_baseX.__doc__)
+    print('\tTests:')
+    print('\tb_to_baseX() = %s'                                         % b_to_baseX()                                  )
+    print('\tb_to_baseX(\'\') = %s'                                     % b_to_baseX('')                                )
+    print('\tb_to_baseX(\'\', base=4) = %s'                             % b_to_baseX('', base=4)                        )
+    print('\tb_to_baseX(\'\', base=8) = %s'                             % b_to_baseX('', base=8)                        )
+    print('\tb_to_baseX(\'\', base=16) = %s'                            % b_to_baseX('', base=16)                       )
+    print('\tb_to_baseX(\'\', base=32) = %s'                            % b_to_baseX('', base=32)                       )
+    print('\tb_to_baseX(\'\', base=64) = %s'                            % b_to_baseX('', base=64)                       )
+    print('\tb_to_baseX(\'00011011\', base=4) = %s'                     % b_to_baseX('00011011', base=4)                )
+    print('\tb_to_baseX(\'000110111\', base=4) = %s'                    % b_to_baseX('000110111', base=4)               )
+    print('\tb_to_baseX(\'0001101110\', base=4) = %s'                   % b_to_baseX('0001101110', base=4)              )
+    print('\tb_to_baseX(\'000001010011100101110111\', base=8) = %s'     % b_to_baseX('000001010011100101110111', base=8))
+    print('\tb_to_baseX(\'0000010110101111\', base=16) = %s'            % b_to_baseX('0000010110101111', base=16)       )
+    print('\tb_to_baseX(\'0000010110101111\', base=32) = %s'            % b_to_baseX('0000010110101111', base=32)       )
+    print('\tb_to_baseX(int_to_b(int(\'14FB9C03D97E\', 16), width=48)) = %s'
+                                                                        % b_to_baseX(int_to_b(int('14FB9C03D97E', 16), width=48))       )
+    print('\tb_to_baseX(int_to_b(int(\'14FB9C03D9\', 16), width=40)) = %s'
+                                                                        % b_to_baseX(int_to_b(int('14FB9C03D9', 16), width=40))         )
+    print('\tb_to_baseX(int_to_b(int(\'14FB9C03\', 16), width=32)) = %s'
+                                                                        % b_to_baseX(int_to_b(int('14FB9C03', 16), width=32))           )
+    print('\tb_to_baseX(int_to_b(int(\'14FB9C03\', 16), width=32), pad=\'\') = %s'
+                                                                        % b_to_baseX(int_to_b(int('14FB9C03', 16), width=32), pad='')   )
+    print('\tb_to_baseX(\'00011011\', base=4, alphabet=\'abcd\') = %s'  % b_to_baseX('00011011', base=4, alphabet='abcd')               )
     
     # }}} End of Miscellaneous Functions
     
