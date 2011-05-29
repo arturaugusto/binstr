@@ -607,90 +607,11 @@ def b_mul(A='00000000', B='00000000', endian='big'): # {{{
 
 # }}} End of Arithmetic Operations
 
-# Miscellaneous Functions {{{
-
-def b_blockify(A='', size=4, sep=' ', pad='', align='left'): # {{{
-    '''
-    Separate a string of binary digits into blocks.
-    
-    The size of the block is 4 by default but can be specified as any
-      positive integer greater than 0.
-    The alignment of the string can be specified as either left or right,
-      and is left by default.
-    The separating character is a space be default but can be specified
-      as an arbitrary string (not required to be just a single character).
-    There is no padding character by default but can also be specified as
-      an arbitrary string.
-    
-    If the input is an empty string then an empty string will be returned.
-    
-    E.g. b_blockify() returns ''
-         b_blockify('00000000') returns '0000 0000'
-         b_blockify('0'*9) returns '0000 0000 0'
-         b_blockify('0'*9, pad='x') returns '0000 0000 0xxx'
-         b_blockify('0'*9, pad='x', align='right') returns 'xxx0 0000 0000'
-         b_blockify('0'*9, sep='_') returns '0000_0000_0'
-         b_blockify('0'*9, size='3') returns '000 000 000'
-    '''
-    assert b_validate(A, fail_empty=False) == True, 'A is not a valid b_string: %s' % str(A)
-    assert type(size)  is int,  'size is not an integer: %s' % str(size)
-    assert type(sep) is str, 'sep is not a string: %s' % str(sep)
-    assert type(pad) is str, 'pad is not a string: %s' % str(pad)
-    assert type(align) is str, 'align is not a string: %s' % str(align)
-    
-    assert size > 0, 'size is not a positive integer greater than zero: %d' % size
-    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
-    
-    if align == 'right': A = A[::-1]                                    # This is the most simple way to deal with alignment
-    
-    t = ''
-    lenA = len(A)                                                       # Pre-calculate this to save doing it every iteration
-    for i, c in enumerate(A):
-        t += c
-        if ((i + 1 + size) % size == 0) and (i < (lenA - 1)): t += sep  # Add separator
-        del i, c
-    
-    t += pad*((size - (lenA % size)) % size)                            # Add padding
-    
-    del A, lenA
-
-    if align == 'right': t = t[::-1]                                    # Correct alignment
-    
-    return t
-    # }}} End of b_blockify()
-
-def b_validate(A='', fail_empty=True): # {{{
-    '''
-    Validate that a given string contains only 0s and 1s.
-    
-    This will return True if the string is valid, otherwise it returns False.
-    
-    E.g. b_validate() returns False
-         b_validate('') returns False
-         b_validate('', fail_empty=False) returns True
-         b_validate('01010101') returns True
-         b_validate('010120101') returns False
-         b_validate('0101 0101') returns False
-    '''
-    # Assertions cannot be used in here because when optimisation is turned on they
-    #   will be compiled out.
-    t = True
-    
-    if t and not(type(A) is str): t = False
-    if t and fail_empty and not(len(A) > 0): t = False
-    
-    if t:
-        from re import compile as re_compile
-        pattern = re_compile('[^01]')
-        t = not( bool(pattern.search(A)) )
-        del re_compile, pattern
-    
-    return t
-    # }}} End of b_validate()
+# Base Conversion {{{
 
 def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad='0'): # {{{
     '''
-    Convert from binary coding to BaseX coding.
+    Convert from binary coding to another base.
     
     The input string will ALWAYS be padded out to a multiple of 8 bits.
     The alignment of this padding can be controlled with the align argument,
@@ -802,6 +723,166 @@ def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad=
     
     return t
     # }}} End of b_to_baseX()
+
+def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
+    '''
+    Convert from another base to binary coding.
+    
+    This is performs to opposite function to b_to_baseX().
+    The input base can be either 4, 8, 16, 32 or 64 (default).
+    A user-defined alphabet can be supplied containing any characters in any
+      order as long at the length is equal to the base using the alphabet
+      argument.
+    Supplying an empty input string will return in the alphabet which is used
+      for that base.
+    The default alphabets for bases 32 and 64 are taken from RCF 3548 and
+      the alphabets used for bases 4, 8 and 16 are standard.
+    If a character is used in the input string it must be specified using the
+      pad argument.
+    
+    E.g. baseX_to_b() returns '00000000'
+         baseX_to_b('') returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+         baseX_to_b('', base=4) returns '0123'
+         baseX_to_b('', base=8) returns '01234567'
+         baseX_to_b('', base=16) returns '0123456789ABCDEF'
+         baseX_to_b('', base=32) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+         baseX_to_b('', base=64) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+         baseX_to_b('0123', base=4) returns '00011011'
+         baseX_to_b('01234567', base=8) returns '000001010011100101110111'
+         baseX_to_b('05AF', base=16) returns '0000010110101111'
+         baseX_to_b('AZ27', base=32) returns '00000110011101011111'
+         baseX_to_b('TWFu', base=64) returns '010011010110000101101110'
+    '''
+    
+    # These are the default alphabets.
+    # 4 is standard radix-4 notation.
+    # 8 is standard octal notation.
+    # 16 is standard hexadecimal notation (uppercase). This also appears in RFC 3548.
+    # 32 and 64 are taken from RFC 3548.
+    base_alphabets = {
+                      '4'  : '0123',
+                      '8'  : '01234567',
+                      '16' : '0123456789ABCDEF',
+                      '32' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',
+                      '64' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+                     }
+    
+    assert type(base) is int, 'base is not a positive integer: %s'  % str(base)
+    assert type(pad) is str, 'pad is not a string: %s'  % str(pad)
+    assert type(alphabet) is str, 'alphabet is not a string: %s'  % str(alphabet)
+    
+    assert base in [4, 8, 16, 32, 64], 'base must be either 4, 8, 16, 32 or 64: %d' % base
+    assert len(pad) <= 1, 'pad is more that one character long: %s' % pad
+    
+    if not len(alphabet): alphabet = base_alphabets[str(base)] # Allow user to specify their own alphabet else use default.
+    assert len(alphabet) == base, 'alphabet is not %d characters long: %s' % (base, alphabet)
+    
+    # Return the active alphabet on empty input string.
+    if not len(instr): return alphabet
+    
+    if len(pad): instr = instr.rstrip(pad)
+
+    # Validate instr
+    from re import compile as re_compile
+    pattern = re_compile('[^' + alphabet + ']')
+    assert bool(pattern.search(instr)) == False, 'instr contains characters not in the given alphabet'
+    del re_compile, pattern
+    
+    from math import log, floor
+    bits_per_char = int(floor(log(base, 2))) # Calculate the number of bits each character will represent.
+    del log, floor
+    
+    # Generate string of new base.
+    t = ''
+    for c in instr: t += int_to_b(alphabet.find(c), width=bits_per_char)
+    
+    assert b_validate(t) == True, 'Something wrong in this function. t is not a valid b_string: %s' % str(t)
+    
+    return t
+    # }}} End of baseX_to_b()
+
+# }}} End of Base Conversion
+
+# Miscellaneous Functions {{{
+
+def b_blockify(A='', size=4, sep=' ', pad='', align='left'): # {{{
+    '''
+    Separate a string of binary digits into blocks.
+    
+    The size of the block is 4 by default but can be specified as any
+      positive integer greater than 0.
+    The alignment of the string can be specified as either left or right,
+      and is left by default.
+    The separating character is a space be default but can be specified
+      as an arbitrary string (not required to be just a single character).
+    There is no padding character by default but can also be specified as
+      an arbitrary string.
+    
+    If the input is an empty string then an empty string will be returned.
+    
+    E.g. b_blockify() returns ''
+         b_blockify('00000000') returns '0000 0000'
+         b_blockify('0'*9) returns '0000 0000 0'
+         b_blockify('0'*9, pad='x') returns '0000 0000 0xxx'
+         b_blockify('0'*9, pad='x', align='right') returns 'xxx0 0000 0000'
+         b_blockify('0'*9, sep='_') returns '0000_0000_0'
+         b_blockify('0'*9, size='3') returns '000 000 000'
+    '''
+    assert b_validate(A, fail_empty=False) == True, 'A is not a valid b_string: %s' % str(A)
+    assert type(size)  is int,  'size is not an integer: %s' % str(size)
+    assert type(sep) is str, 'sep is not a string: %s' % str(sep)
+    assert type(pad) is str, 'pad is not a string: %s' % str(pad)
+    assert type(align) is str, 'align is not a string: %s' % str(align)
+    
+    assert size > 0, 'size is not a positive integer greater than zero: %d' % size
+    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
+    
+    if align == 'right': A = A[::-1]                                    # This is the most simple way to deal with alignment
+    
+    t = ''
+    lenA = len(A)                                                       # Pre-calculate this to save doing it every iteration
+    for i, c in enumerate(A):
+        t += c
+        if ((i + 1 + size) % size == 0) and (i < (lenA - 1)): t += sep  # Add separator
+        del i, c
+    
+    t += pad*((size - (lenA % size)) % size)                            # Add padding
+    
+    del A, lenA
+
+    if align == 'right': t = t[::-1]                                    # Correct alignment
+    
+    return t
+    # }}} End of b_blockify()
+
+def b_validate(A='', fail_empty=True): # {{{
+    '''
+    Validate that a given string contains only 0s and 1s.
+    
+    This will return True if the string is valid, otherwise it returns False.
+    
+    E.g. b_validate() returns False
+         b_validate('') returns False
+         b_validate('', fail_empty=False) returns True
+         b_validate('01010101') returns True
+         b_validate('010120101') returns False
+         b_validate('0101 0101') returns False
+    '''
+    # Assertions cannot be used in here because when optimisation is turned on they
+    #   will be compiled out.
+    t = True
+    
+    if t and not(type(A) is str): t = False
+    if t and fail_empty and not(len(A) > 0): t = False
+    
+    if t:
+        from re import compile as re_compile
+        pattern = re_compile('[^01]')
+        t = not( bool(pattern.search(A)) )
+        del re_compile, pattern
+    
+    return t
+    # }}} End of b_validate()
 
 # }}} End of Miscellaneous Functions
 
@@ -980,28 +1061,7 @@ def run_self_test(): # {{{
     
     # }}} End of Arithmetic Operations
     
-    # Miscellaneous Functions {{{
-    
-    print('\nb_blockify()...')
-    print(b_blockify.__doc__)
-    print('\tTests:')
-    print('\tb_blockify() = %s'                                         % b_blockify()                                  )
-    print('\tb_blockify(\'00000000\') = %s'                             % b_blockify('00000000')                        )
-    print('\tb_blockify(\'0\'*9) = %s'                                  % b_blockify('0'*9)                             )
-    print('\tb_blockify(\'0\'*9, pad=\'x\') = %s'                       % b_blockify('0'*9, pad='x')                    )
-    print('\tb_blockify(\'0\'*9, pad=\'x\', align=\'right\') = %s'      % b_blockify('0'*9, pad='x', align='right')     )
-    print('\tb_blockify(\'0\'*9, sep=\'_\') = %s'                       % b_blockify('0'*9, sep='_')                    )
-    print('\tb_blockify(\'0\'*9, size=3) = %s'                          % b_blockify('0'*9, size=3)                     )
-    
-    print('\nb_validate()...')
-    print(b_validate.__doc__)
-    print('\tTests:')
-    print('\tb_validate() = %s'                                         % b_validate()                                  )
-    print('\tb_validate(\'\') = %s'                                     % b_validate('')                                )
-    print('\tb_validate(\'\', fail_empty=False) = %s'                   % b_validate('', fail_empty=False)              )
-    print('\tb_validate(\'01010101\') = %s'                             % b_validate('01010101')                        )
-    print('\tb_validate(\'010120101\') = %s'                            % b_validate('010120101')                       )
-    print('\tb_validate(\'0101 0101\') = %s'                            % b_validate('0101 0101')                       )
+    # Base Conversion {{{
     
     print('\nb_to_baseX()...')
     print(b_to_baseX.__doc__)
@@ -1028,6 +1088,47 @@ def run_self_test(): # {{{
     print('\tb_to_baseX(int_to_b(int(\'14FB9C03\', 16), width=32), pad=\'\') = %s'
                                                                         % b_to_baseX(int_to_b(int('14FB9C03', 16), width=32), pad='')   )
     print('\tb_to_baseX(\'00011011\', base=4, alphabet=\'abcd\') = %s'  % b_to_baseX('00011011', base=4, alphabet='abcd')               )
+    
+    print('\nbaseX_to_b()...')
+    print(baseX_to_b.__doc__)
+    print('\tTests:')
+    print('\tbaseX_to_b() = %s'                                         % baseX_to_b()                                  )
+    print('\tbaseX_to_b(\'\') = %s'                                     % baseX_to_b('')                                )
+    print('\tbaseX_to_b(\'\', base=4) = %s'                             % baseX_to_b('', base=4)                        )
+    print('\tbaseX_to_b(\'\', base=8) = %s'                             % baseX_to_b('', base=8)                        )
+    print('\tbaseX_to_b(\'\', base=16) = %s'                            % baseX_to_b('', base=16)                       )
+    print('\tbaseX_to_b(\'\', base=32) = %s'                            % baseX_to_b('', base=32)                       )
+    print('\tbaseX_to_b(\'\', base=64) = %s'                            % baseX_to_b('', base=64)                       )
+    print('\tbaseX_to_b(\'0123\', base=4) = %s'                         % baseX_to_b('0123', base=4)                    )
+    print('\tbaseX_to_b(\'01234567\', base=8) = %s'                     % baseX_to_b('01234567', base=8)                )
+    print('\tbaseX_to_b(\'05AF\', base=16) = %s'                        % baseX_to_b('05AF', base=16)                   )
+    print('\tbaseX_to_b(\'AZ27\', base=32) = %s'                        % baseX_to_b('AZ27', base=32)                   )
+    print('\tbaseX_to_b(\'TWFu\', base=64) = %s'                        % baseX_to_b('TWFu', base=64)                   )
+    
+    # }}} End of Base Conversion
+    
+    # Miscellaneous Functions {{{
+    
+    print('\nb_blockify()...')
+    print(b_blockify.__doc__)
+    print('\tTests:')
+    print('\tb_blockify() = %s'                                         % b_blockify()                                  )
+    print('\tb_blockify(\'00000000\') = %s'                             % b_blockify('00000000')                        )
+    print('\tb_blockify(\'0\'*9) = %s'                                  % b_blockify('0'*9)                             )
+    print('\tb_blockify(\'0\'*9, pad=\'x\') = %s'                       % b_blockify('0'*9, pad='x')                    )
+    print('\tb_blockify(\'0\'*9, pad=\'x\', align=\'right\') = %s'      % b_blockify('0'*9, pad='x', align='right')     )
+    print('\tb_blockify(\'0\'*9, sep=\'_\') = %s'                       % b_blockify('0'*9, sep='_')                    )
+    print('\tb_blockify(\'0\'*9, size=3) = %s'                          % b_blockify('0'*9, size=3)                     )
+    
+    print('\nb_validate()...')
+    print(b_validate.__doc__)
+    print('\tTests:')
+    print('\tb_validate() = %s'                                         % b_validate()                                  )
+    print('\tb_validate(\'\') = %s'                                     % b_validate('')                                )
+    print('\tb_validate(\'\', fail_empty=False) = %s'                   % b_validate('', fail_empty=False)              )
+    print('\tb_validate(\'01010101\') = %s'                             % b_validate('01010101')                        )
+    print('\tb_validate(\'010120101\') = %s'                            % b_validate('010120101')                       )
+    print('\tb_validate(\'0101 0101\') = %s'                            % b_validate('0101 0101')                       )
     
     # }}} End of Miscellaneous Functions
     
