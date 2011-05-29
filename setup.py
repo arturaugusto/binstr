@@ -4,7 +4,7 @@ long_desc = open('README.txt').read()
 
 setup(
     name                = 'binstr',
-    version             = '1.1',
+    version             = '1.2',
     py_modules          = ['binstr'],
     description         = 'Utility functions for strings of binary digits',
     author              = 'David McEwan',
