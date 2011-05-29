@@ -37,6 +37,9 @@ Includes:
     b_add()         - Perform an ADD operation
     b_mul()         - Perform a MUL operation (multiply)
     
+    b_to_baseX()    - Convert from binary coding to another base (4, 8, 16, 32 or 64)
+    baseX_to_b()    - Convert from another base (4, 8, 16, 32 or 64) to binary coding
+    
     b_blockify()    - Separate a string of binary into blocks
     b_validate()    - Validate that a given string contains only 0s and 1s
 
@@ -62,6 +65,8 @@ data = str_to_b('hello_world', endian='little', char_width=8, parity='sE', suffi
 
 Note that data is usually sent out LSB first. The char_width argument is shown
 for clarity but is 8 by default. The suffix argument is used to add one stop bit.
+
+
 -------------------------------------------------------------------------------
 Installation
 -------------------------------------------------------------------------------
@@ -71,4 +76,30 @@ cd to this directory (where README.txt and setup.py are) then run:
 python setup.py install
 
 Note: This may need to be run with root (admin) priviliges.
+
+
+-------------------------------------------------------------------------------
+Dev Notes
+-------------------------------------------------------------------------------
+This is just a list of things which have been considered while developing binstr,
+just in case anybody is interested.
+
+Rejected funtions include:
+    deblockify - Use str().replace()
+    b_to_file - Use file().write(<string>, 'wb')
+    file_to_b - Use str_to_b(open(<path>, 'rb').read())
+    b_log, b_exp, etc... - Use the proper math functions
+    b_sub - Use b_add() with b_not for Two's compliment representaion.
+    b_div - Use b_mul with inverse
+    b_rotl, b_rotr - Use Python slices
+
+The current test mechanism relies on manual inspection which is nice for giving
+examples of how to use each function but not very nice for verification.
+This should be improved at some point.
+
+The Assertions raised are currently not well structured.
+This should be given a consistent structure at some point.
+
+If anybody has any tips, advice or general abuse concerning Binstr then please feel
+free to send me an email or even get on GitHub and contribute.
 
