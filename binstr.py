@@ -898,28 +898,76 @@ def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad=
                       '64' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
                      }
     
-    assert b_validate(A, fail_empty=False) == True, 'A is not a valid b_string: %s' % str(A)
-    assert type(base) is int, 'base is not a positive integer: %s'  % str(base)
-    assert type(pad) is str, 'pad is not a string: %s'  % str(pad)
-    assert type(alphabet) is str, 'alphabet is not a string: %s'  % str(alphabet)
-    assert type(align) is str, 'align is not a string: %s' % str(align)
-    assert type(b_pad) is str, 'b_pad is not a string: %s' % str(b_pad)
+    assert b_validate(A, fail_empty=False) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert base in [4, 8, 16, 32, 64], 'base must be either 4, 8, 16, 32 or 64: %d' % base
-    assert len(pad) <= 1, 'pad is more that one character long: %s' % pad
+    assert type(base) is int, \
+        'Invalid type : base : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': str(type(int())),
+                                                                    'actual': str(type(base)),
+                                                                   }
+    
+    assert base in [4, 8, 16, 32, 64], \
+        'Invalid value: base : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': '4 OR 8 OR 16 OR 32 OR 64',
+                                                                    'actual': str(base),
+                                                                   }
+    
+    assert type(pad) is str, \
+        'Invalid type : pad : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': str(type(str())),
+                                                                   'actual': str(type(pad)),
+                                                                  }
+    
+    assert len(pad) <= 1, \
+        'Invalid value: pad : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': 'len(pad) <= 1',
+                                                                   'actual': str(len(pad)),
+                                                                  }
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(align)),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert type(b_pad) is str, \
+        'Invalid type : b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(b_pad)),
+                                                                    }
+    
+    assert b_pad == '0' or b_pad == '1', \
+        'Invalid value: b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"0" OR "1"',
+                                                                     'actual': str(len(b_pad)),
+                                                                    }
+    
+    assert type(alphabet) is str, \
+        'Invalid type : alphabet : Expected %(expect)s : %(actual)s' % {
+                                                                        'expect': str(type(str())),
+                                                                        'actual': str(type(alphabet)),
+                                                                       }
     
     if not len(alphabet): alphabet = base_alphabets[str(base)] # Allow user to specify their own alphabet else use default.
-    assert len(alphabet) == base, 'alphabet is not %d characters long: %s' % (base, alphabet)
-    
-    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
-    assert b_pad == '0' or b_pad == '1', 'Invalid b_pad: "%s". Use either "0" or "1"' % b_pad
+    assert len(alphabet) == base, \
+        'Invalid value: alphabet : Expected %(expect)s : %(actual)s' % {
+                                                                        'expect': 'len(alphabet) == base',
+                                                                        'actual': str(len(alphabet)),
+                                                                       }
     
     # Return the active alphabet on empty input string.
     if not len(A): return alphabet
     
-    from math import log, floor
-    bits_per_char = int(floor(log(base, 2))) # Calculate the number of bits each character will represent.
-    del log, floor
+    from math import log
+    bits_per_char = int(log(base, 2)) # Calculate the number of bits each character will represent.
+    del log
     
     bits_per_byte = 8 # Yes. this is obvious but I think it makes the following code more readable.
     
@@ -996,36 +1044,62 @@ def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
                       '64' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
                      }
     
-    assert type(base) is int, 'base is not a positive integer: %s'  % str(base)
-    assert type(pad) is str, 'pad is not a string: %s'  % str(pad)
-    assert type(alphabet) is str, 'alphabet is not a string: %s'  % str(alphabet)
+    assert type(base) is int, \
+        'Invalid type : base : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': str(type(int())),
+                                                                    'actual': str(type(base)),
+                                                                   }
     
-    assert base in [4, 8, 16, 32, 64], 'base must be either 4, 8, 16, 32 or 64: %d' % base
-    assert len(pad) <= 1, 'pad is more that one character long: %s' % pad
+    assert base in [4, 8, 16, 32, 64], \
+        'Invalid value: base : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': '4 OR 8 OR 16 OR 32 OR 64',
+                                                                    'actual': str(base),
+                                                                   }
+    
+    assert type(pad) is str, \
+        'Invalid type : pad : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': str(type(str())),
+                                                                   'actual': str(type(pad)),
+                                                                  }
+    
+    assert len(pad) <= 1, \
+        'Invalid value: pad : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': 'len(pad) <= 1',
+                                                                   'actual': str(len(pad)),
+                                                                  }
+    
+    assert type(alphabet) is str, \
+        'Invalid type : alphabet : Expected %(expect)s : %(actual)s' % {
+                                                                        'expect': str(type(str())),
+                                                                        'actual': str(type(alphabet)),
+                                                                       }
     
     if not len(alphabet): alphabet = base_alphabets[str(base)] # Allow user to specify their own alphabet else use default.
-    assert len(alphabet) == base, 'alphabet is not %d characters long: %s' % (base, alphabet)
+    assert len(alphabet) == base, \
+        'Invalid value: alphabet : Expected %(expect)s : %(actual)s' % {
+                                                                        'expect': 'len(alphabet) == base',
+                                                                        'actual': str(len(alphabet)),
+                                                                       }
     
     # Return the active alphabet on empty input string.
     if not len(instr): return alphabet
     
-    if len(pad): instr = instr.rstrip(pad)
+    if len(pad): instr = instr.rstrip(pad) # Remove padding characters
 
     # Validate instr
     from re import compile as re_compile
     pattern = re_compile('[^' + alphabet + ']')
-    assert bool(pattern.search(instr)) == False, 'instr contains characters not in the given alphabet'
+    assert bool(pattern.search(instr)) == False, \
+        'Invalid value: instr : Contains characters not in given alphabet'
     del re_compile, pattern
     
-    from math import log, floor
-    bits_per_char = int(floor(log(base, 2))) # Calculate the number of bits each character will represent.
-    del log, floor
+    from math import log
+    bits_per_char = int(log(base, 2)) # Calculate the number of bits each character will represent.
+    del log
     
     # Generate string of new base.
     t = ''
     for c in instr: t += int_to_b(alphabet.find(c), width=bits_per_char)
-    
-    assert b_validate(t) == True, 'Something wrong in this function. t is not a valid b_string: %s' % str(t)
     
     return t
     # }}} End of baseX_to_b()
@@ -1045,7 +1119,7 @@ def b_blockify(A='', size=4, sep=' ', pad='', align='left'): # {{{
     The separating character is a space be default but can be specified
       as an arbitrary string (not required to be just a single character).
     There is no padding character by default but can also be specified as
-      an arbitrary string.
+      an arbitrary string (not required to be just a single character).
     
     If the input is an empty string then an empty string will be returned.
     
@@ -1057,14 +1131,44 @@ def b_blockify(A='', size=4, sep=' ', pad='', align='left'): # {{{
          b_blockify('0'*9, sep='_') returns '0000_0000_0'
          b_blockify('0'*9, size='3') returns '000 000 000'
     '''
-    assert b_validate(A, fail_empty=False) == True, 'A is not a valid b_string: %s' % str(A)
-    assert type(size)  is int,  'size is not an integer: %s' % str(size)
-    assert type(sep) is str, 'sep is not a string: %s' % str(sep)
-    assert type(pad) is str, 'pad is not a string: %s' % str(pad)
-    assert type(align) is str, 'align is not a string: %s' % str(align)
+    assert b_validate(A, fail_empty=False) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert size > 0, 'size is not a positive integer greater than zero: %d' % size
-    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
+    assert type(size) is int, \
+        'Invalid type : size : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': str(type(int())),
+                                                                    'actual': str(type(size)),
+                                                                   }
+    
+    assert size > 0, \
+        'Invalid value : size : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': 'size > 0',
+                                                                     'actual': str(size),
+                                                                    }
+    
+    assert type(sep) is str, \
+        'Invalid type : sep : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': str(type(str())),
+                                                                   'actual': str(type(sep)),
+                                                                  }
+    
+    assert type(pad) is str, \
+        'Invalid type : pad : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': str(type(str())),
+                                                                   'actual': str(type(pad)),
+                                                                  }
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(align)),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
     
     if align == 'right': A = A[::-1]                                    # This is the most simple way to deal with alignment
     
