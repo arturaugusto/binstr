@@ -57,11 +57,23 @@ def b_and(A='00000000', B='00000000', align='right'): #{{{
          b_and('01010000', '0011') returns '00000000'
          b_and('01010000', '0011', align='left') returns '00010000'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
-    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
-    assert type(align) is str, 'align is not a string: %s' % str(align)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
+    assert b_validate(B) == True, \
+        'Invalid b_string : B : %(actual)s' % {'actual': str(B)}
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type('')),
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -69,7 +81,6 @@ def b_and(A='00000000', B='00000000', align='right'): #{{{
     
     if align == 'right': q = '0'*(len(p) - len(q)) + q
     else:                q = q + '0'*(len(p) - len(q))
-    assert len(p) == len(q), 'Error in this function! len(p) must equal len(q). Oh dear.'
     
     return ''.join([str(int( bool(int(a)) and bool(int(b)) )) for (a, b) in zip(p, q)])
     # }}} End of b_and()
@@ -84,11 +95,23 @@ def b_nand(A='00000000', B='00000000', align='right'): #{{{
          b_and('01010000', '0011') returns '11111111'
          b_and('01010000', '0011', align='left') returns '11101111'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
-    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
-    assert type(align) is str, 'align is not a string: %s' % str(align)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
+    assert b_validate(B) == True, \
+        'Invalid b_string : B : %(actual)s' % {'actual': str(B)}
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type('')),
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -96,7 +119,6 @@ def b_nand(A='00000000', B='00000000', align='right'): #{{{
     
     if align == 'right': q = '0'*(len(p) - len(q)) + q
     else:                q = q + '0'*(len(p) - len(q))
-    assert len(p) == len(q), 'Error in this function! len(p) must equal len(q). Oh dear.'
     
     return ''.join([str(int( not( bool(int(a)) and bool(int(b)) ) )) for (a, b) in zip(p, q)])
     # }}} End of b_nand()
@@ -111,11 +133,23 @@ def b_or(A='00000000', B='00000000', align='right'): # {{{
          b_or('01010000', '0011') returns '01010011'
          b_or('01010000', '0011', align='left') returns '01110000'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
-    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
-    assert type(align) is str, 'align is not a string: %s' % str(align)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
+    assert b_validate(B) == True, \
+        'Invalid b_string : B : %(actual)s' % {'actual': str(B)}
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type('')),
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -123,7 +157,6 @@ def b_or(A='00000000', B='00000000', align='right'): # {{{
     
     if align == 'right': q = '0'*(len(p) - len(q)) + q
     else:                q = q + '0'*(len(p) - len(q))
-    assert len(p) == len(q), 'Error in this function! len(p) must equal len(q). Oh dear.'
     
     return ''.join([str(int( bool(int(a)) or bool(int(b)) )) for (a, b) in zip(p, q)])
     # }}} End of b_or()
@@ -138,11 +171,23 @@ def b_nor(A='00000000', B='00000000', align='right'): # {{{
          b_or('01010000', '0011') returns '10101100'
          b_or('01010000', '0011', align='left') returns '10001111'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
-    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
-    assert type(align) is str, 'align is not a string: %s' % str(align)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
+    assert b_validate(B) == True, \
+        'Invalid b_string : B : %(actual)s' % {'actual': str(B)}
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type('')),
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -150,7 +195,6 @@ def b_nor(A='00000000', B='00000000', align='right'): # {{{
     
     if align == 'right': q = '0'*(len(p) - len(q)) + q
     else:                q = q + '0'*(len(p) - len(q))
-    assert len(p) == len(q), 'Error in this function! len(p) must equal len(q). Oh dear.'
     
     return ''.join([str(int( not( bool(int(a)) or bool(int(b)) ) )) for (a, b) in zip(p, q)])
     # }}} End of b_nor()
@@ -165,11 +209,23 @@ def b_xor(A='00000000', B='00000000', align='right'): # {{{
          b_or('01010000', '0011') returns '01010011'
          b_or('01010000', '0011', align='left') returns '01100000'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
-    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
-    assert type(align) is str, 'align is not a string: %s' % str(align)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
+    assert b_validate(B) == True, \
+        'Invalid b_string : B : %(actual)s' % {'actual': str(B)}
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type('')),
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -177,7 +233,6 @@ def b_xor(A='00000000', B='00000000', align='right'): # {{{
     
     if align == 'right': q = '0'*(len(p) - len(q)) + q
     else:                q = q + '0'*(len(p) - len(q))
-    assert len(p) == len(q), 'Error in this function! len(p) must equal len(q). Oh dear.'
     
     return ''.join([str(int( bool(int(a)) ^ bool(int(b)) )) for (a, b) in zip(p, q)])
     # }}} End of b_xor()
@@ -192,11 +247,23 @@ def b_nxor(A='00000000', B='00000000', align='right'): # {{{
          b_or('01010000', '0011') returns '10101100'
          b_or('01010000', '0011', align='left') returns '10011111'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
-    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
-    assert type(align) is str, 'align is not a string: %s' % str(align)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert align == 'right' or align == 'left', 'Invalid align: "%s". Use either "right" or "left"' % align
+    assert b_validate(B) == True, \
+        'Invalid b_string : B : %(actual)s' % {'actual': str(B)}
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type('')),
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
     
     if len(A) >= len(B): (p, q) = (A, B)
     else:                (p, q) = (B, A)
@@ -204,7 +271,6 @@ def b_nxor(A='00000000', B='00000000', align='right'): # {{{
     
     if align == 'right': q = '0'*(len(p) - len(q)) + q
     else:                q = q + '0'*(len(p) - len(q))
-    assert len(p) == len(q), 'Error in this function! len(p) must equal len(q). Oh dear.'
     
     return ''.join([str(int( not( bool(int(a)) ^ bool(int(b)) ) )) for (a, b) in zip(p, q)])
     # }}} End of b_nxor()
@@ -216,7 +282,8 @@ def b_not(A='00000000'): # {{{
     E.g. b_or('0101') returns '1010'
          b_or() returns '11111111'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
     return ''.join([str(int( not( bool(int(a)) ) )) for a in A])
     # }}} End of b_not()
