@@ -420,19 +420,62 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
          int_to_b(0xF5, width=7) returns '1110101'
          int_to_b(0xF5, width=7, chop='least') returns '1111010'
     '''
-    assert type(num) is int or type(num) is long,  'num is not an integer: %s' % str(num)
-    assert type(width)  is int,  'width is not an integer: %s' % str(width)
-    assert type(endian) is str,  'endian is not a string: %s'  % str(endian)
-    assert type(chop)   is str,  'chop is not a string: %s'    % str(chop)
+    assert type(num) is int or type(num) is long, \
+        'Invalid type : num : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': str(type(int())) + ' OR ' + str(type(long())),
+                                                                   'actual': str(type(num)),
+                                                                  }
     
-    assert num >= 0,   'num is not a positive integer: %d'   % num
-    assert width >= 0, 'width is not a positive integer: %d' % width
-    assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % endian
-    assert chop == 'most' or chop == 'least', 'Invalid chop: "%s". Use either "most" or "least"'   % chop
+    assert num >= 0, \
+        'Invalid value : num : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': 'num > 0',
+                                                                    'actual': str(num),
+                                                                   }
     
-    t = bin(num)                        # bin() returns a string with a '0b' prefix that we don't want
-    assert t[:2] == '0b',               'bin() is not behaving as expected. bin(num) = %s' % t
-    t = t[2:]
+    assert type(width) is int, \
+        'Invalid type : width : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(int())),
+                                                                     'actual': str(type(width)),
+                                                                    }
+    
+    assert width >= 0, \
+        'Invalid value : width : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': 'width > 0',
+                                                                      'actual': str(width),
+                                                                     }
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    
+    assert type(chop) is str, \
+        'Invalid type : chop : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': str(type(str())),
+                                                                    'actual': str(type(chop)),
+                                                                   }
+    
+    assert chop == 'most' or chop == 'least', \
+        'Invalid value: chop : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': '"most" OR "least"',
+                                                                    'actual': str(chop),
+                                                                   }
+    
+    # The actual conversion. Not dependent on the behaviour of bin().
+    a = num
+    b = ''
+    while a:
+        b += str(a % 2)
+        a /= 2
+    t = b[::-1]
+    del a, b
     
     if len(t) > width:
         if   chop == 'most': t = t[(-1 * width):]   # Remove most significant bits
