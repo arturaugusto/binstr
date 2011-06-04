@@ -681,17 +681,25 @@ def b_bin_to_gray(A='00000000', endian='big'): # {{{
          b_bin_to_gray('1101', endian='big') returns '1011'
          b_bin_to_gray('1101', endian='little') returns '0111'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
-    assert type(endian) is str,  'endian is not a string: %s'  % str(endian)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % endian
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
     
     if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
     
     g = A[0]
     for i in range(1, len(A)): g += str( int(A[i-1] != A[i]) )
-    
-    assert len(A) == len(g), 'Error in this function! len(A) must equal len(g). Oh dear.'
     
     if endian == 'little': g = g[::-1] # Convert back to little endian if necessary
     
@@ -711,10 +719,20 @@ def b_gray_to_bin(A='00000000', endian='big'): # {{{
          b_gray_to_bin('1101', endian='big') returns '1001'
          b_gray_to_bin('1101', endian='little') returns '1011'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
-    assert type(endian) is str,  'endian is not a string: %s'  % str(endian)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % endian
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
     
     if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
     
@@ -747,11 +765,23 @@ def b_add(A='00000000', B='00000000', endian='big'): # {{{
          b_add('0001', '0001') returns '00010'
          b_add('0001', '0001', endian='little') returns '00001'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
-    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
-    assert type(endian) is str, 'endian is not a string: %s' % str(endian)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % str(endian)
+    assert b_validate(B) == True, \
+        'Invalid b_string : B : %(actual)s' % {'actual': str(B)}
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
     
     if endian == 'little':                     # Ensure both inputs are big endian before the add 
         A = A[::-1]
@@ -776,11 +806,23 @@ def b_mul(A='00000000', B='00000000', endian='big'): # {{{
          b_mul('0001', '0001') returns '00000001'
          b_mul('0001', '0001', endian='little') returns '00000010'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
-    assert b_validate(B) == True, 'B is not a valid b_string: %s' % str(B)
-    assert type(endian) is str, 'endian is not a string: %s' % str(endian)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
-    assert endian == 'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % str(endian)
+    assert b_validate(B) == True, \
+        'Invalid b_string : B : %(actual)s' % {'actual': str(B)}
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
     
     if endian == 'little':                     # Ensure both inputs are big endian before the add 
         A = A[::-1]
