@@ -411,7 +411,7 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     The endianess is little by default but can be set to big to return a
       bit reversal.
     
-    The returned string is can be converted to an int in python by setting
+    The returned string is can be converted to an int in Python by setting
       the base to 2 e.g.:'int( int_to_b(...) , 2 )'.
        
     E.g. int_to_b() returns '00000000'
@@ -497,25 +497,56 @@ def frac_to_b(num=0.0, width=8, endian='big'): # {{{
     The endianess is little by default but can be set to big to return a
       bit reversal.
     
-    The returned string is can be converted to an int in python by setting
+    The returned string is can be converted to an int in Python by setting
       the base to 2 e.g.:'int( frac_to_b(...) , 2 )'.
     
     E.g. frac_to_b() returns 00000000
          frac_to_b(0.3, 5) returns 01010
          frac_to_b(0.5, width=10, endian='little') returns 0000000001
     '''
-    assert type(num)    is float, 'num is not an float: %s'     % str(num)
-    assert type(width)  is int,   'width is not an integer: %s' % str(width)
-    assert type(endian) is str,   'endian is not a string: %s'  % str(endian)
+    assert type(num) is float, \
+        'Invalid type : num : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': str(type(float())),
+                                                                   'actual': str(type(num)),
+                                                                  }
     
-    assert num < 1.0,  'num is not less than 1.0: %d'        % str(num)
-    assert width >= 0, 'width is not a positive integer: %d' % str(width)
-    assert endian ==   'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % str(endian)
+    assert num < 1.0, \
+        'Invalid value : num : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': 'num < 1.0',
+                                                                    'actual': str(num),
+                                                                   }
     
-    num *= 2**width
-    t = bin(int(round(num)))            # bin() returns a string with a '0b' prefix that we don't want
-    assert t[:2] == '0b',               'bin() is not behaving as expected. bin(num) = %s' % t
-    t = t[2:]
+    assert type(width) is int, \
+        'Invalid type : width : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(int())),
+                                                                     'actual': str(type(width)),
+                                                                    }
+    
+    assert width >= 0, \
+        'Invalid value : width : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': 'width > 0',
+                                                                      'actual': str(width),
+                                                                     }
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    
+    a = int(round(num * 2**width)) # Move the most significant bit to the correct place and round.
+    b = ''
+    while a:
+        b += str(a % 2)
+        a /= 2
+    t = b[::-1]
+    del a, b
     
     if len(t) > width: t = t[:width]                    # Remove least significant bits
     else:              t = '0'*(width - len(t)) + t     # Add padding zeros
