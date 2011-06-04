@@ -93,12 +93,12 @@ Rejected funtions include:
     b_div - Use b_mul with inverse
     b_rotl, b_rotr - Use Python slices
 
+Functions on my TODO list:
+    b_to_str - My reason for rejecting b_to_file depends on something like this :p
+
 The current test mechanism relies on manual inspection which is nice for giving
 examples of how to use each function but not very nice for verification.
 This should be improved at some point.
-
-The Assertions raised are currently not well structured.
-This should be given a consistent structure at some point.
 
 If anybody has any tips, advice or general abuse concerning Binstr then please feel
 free to send me an email or even get on GitHub and contribute.
