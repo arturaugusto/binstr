@@ -65,7 +65,7 @@ def b_and(A='00000000', B='00000000', align='right'): #{{{
     
     assert type(align) is str, \
         'Invalid type : align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type('')),
+                                                                     'expect': str(type(str())),
                                                                      'actual': str(align),
                                                                     }
     
@@ -103,7 +103,7 @@ def b_nand(A='00000000', B='00000000', align='right'): #{{{
     
     assert type(align) is str, \
         'Invalid type : align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type('')),
+                                                                     'expect': str(type(str())),
                                                                      'actual': str(align),
                                                                     }
     
@@ -141,7 +141,7 @@ def b_or(A='00000000', B='00000000', align='right'): # {{{
     
     assert type(align) is str, \
         'Invalid type : align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type('')),
+                                                                     'expect': str(type(str())),
                                                                      'actual': str(align),
                                                                     }
     
@@ -179,7 +179,7 @@ def b_nor(A='00000000', B='00000000', align='right'): # {{{
     
     assert type(align) is str, \
         'Invalid type : align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type('')),
+                                                                     'expect': str(type(str())),
                                                                      'actual': str(align),
                                                                     }
     
@@ -217,7 +217,7 @@ def b_xor(A='00000000', B='00000000', align='right'): # {{{
     
     assert type(align) is str, \
         'Invalid type : align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type('')),
+                                                                     'expect': str(type(str())),
                                                                      'actual': str(align),
                                                                     }
     
@@ -255,7 +255,7 @@ def b_nxor(A='00000000', B='00000000', align='right'): # {{{
     
     assert type(align) is str, \
         'Invalid type : align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type('')),
+                                                                     'expect': str(type(str())),
                                                                      'actual': str(align),
                                                                     }
     
