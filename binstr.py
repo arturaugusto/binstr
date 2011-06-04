@@ -301,7 +301,8 @@ def b_land(A='0'): #{{{
          b_and('01010000') returns '0'
          b_and('00000000') returns '0'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
     if len(A) >= 1 and A.find('0') < 0: return '1'
     else: return '0'
@@ -316,7 +317,8 @@ def b_lnand(A='0'): #{{{
          b_and('01010000') returns '1'
          b_and('00000000') returns '1'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
        
     if len(A) >= 1 and A.find('0') < 0: return '0'
     else: return '1'
@@ -331,7 +333,8 @@ def b_lor(A='0'): #{{{
          b_and('01010000') returns '1'
          b_and('00000000') returns '0'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
     if len(A) >= 1 and A.find('1') < 0: return '0'
     else: return '1'
@@ -346,7 +349,8 @@ def b_lnor(A='0'): #{{{
          b_and('01010000') returns '0'
          b_and('00000000') returns '1'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
     if len(A) >= 1 and A.find('1') < 0: return '1'
     else: return '0'
@@ -363,7 +367,8 @@ def b_lxor(A='0'): #{{{
          b_and('00000001') returns '1'
          b_and('00000000') returns '0'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
     if len(A) >= 1 and A.count('1') % 2 == 0: return '0'
     else: return '1'
@@ -380,7 +385,8 @@ def b_lnxor(A='0'): #{{{
          b_and('00000001') returns '0'
          b_and('00000000') returns '1'
     '''
-    assert b_validate(A) == True, 'A is not a valid b_string: %s' % str(A)
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
     
     if len(A) >= 1 and A.count('1') % 2 == 0: return '1'
     else: return '0'
