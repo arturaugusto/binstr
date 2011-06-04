@@ -428,7 +428,7 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     
     assert num >= 0, \
         'Invalid value : num : Expected %(expect)s : %(actual)s' % {
-                                                                    'expect': 'num > 0',
+                                                                    'expect': 'num >= 0',
                                                                     'actual': str(num),
                                                                    }
     
@@ -440,7 +440,7 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     
     assert width >= 0, \
         'Invalid value : width : Expected %(expect)s : %(actual)s' % {
-                                                                      'expect': 'width > 0',
+                                                                      'expect': 'width >= 0',
                                                                       'actual': str(width),
                                                                      }
     
@@ -524,7 +524,7 @@ def frac_to_b(num=0.0, width=8, endian='big'): # {{{
     
     assert width >= 0, \
         'Invalid value : width : Expected %(expect)s : %(actual)s' % {
-                                                                      'expect': 'width > 0',
+                                                                      'expect': 'width >= 0',
                                                                       'actual': str(width),
                                                                      }
     
@@ -587,23 +587,63 @@ def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity=
          str_to_b('\\x00', parity='pO') returns '100000000'
          str_to_b('U', parity='sE') returns '010101010'
     '''
-    assert type(instr) is str,          'instr is not a string: %s'         % str(instr)
-    assert type(char_width)  is int,    'char_width is not an integer: %s'  % str(char_width)
-    assert type(endian) is str,         'endian is not a string: %s'        % str(endian)
-    assert b_validate(prefix, fail_empty=False) == True, 'prefix is not a valid b_string: %s' % str(prefix)
-    assert b_validate(suffix, fail_empty=False) == True, 'suffix is not a valid b_string: %s' % str(suffix)
-    assert type(parity) is str,         'parity is not a string: %s'        % str(parity)
+    assert type(instr) is str, \
+        'Invalid type : instr : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(instr)),
+                                                                    }
     
     for (i, c) in enumerate(instr):
-        assert ord(c) < 256, 'character "%(c)s" (%(o)s) at position %(i)s is not valid ASCII.' % {'c': str(c), 'o': ord(c), 'i': str(i)}
+        assert ord(c) < 256, \
+            'Invalid value : Character "%(c)s" (%(o)s) at position %(i)s is not valid ASCII (< 256)' % {
+                                                                                                        'c': str(c),
+                                                                                                        'o': ord(c),
+                                                                                                        'i': str(i),
+                                                                                                       }
+    assert type(char_width) is int, \
+        'Invalid type : char_width : Expected %(expect)s : %(actual)s' % {
+                                                                          'expect': str(type(int())),
+                                                                          'actual': str(type(char_width)),
+                                                                         }
     
-    assert char_width >= 0, 'char_width is not a positive integer: %d' % str(char_width)
-    assert endian ==   'little' or endian == 'big', 'Invalid endian: "%s". Use either "little" or "big"' % str(endian)
+    assert char_width >= 0, \
+        'Invalid value : char_width : Expected %(expect)s : %(actual)s' % {
+                                                                           'expect': 'char_width >= 0',
+                                                                           'actual': str(char_width),
+                                                                          }
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    
+    assert type(parity) is str, \
+        'Invalid type : parity : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(parity)),
+                                                                     }
+    
     assert parity == 'N'  or \
            parity == 'pO' or \
            parity == 'sO' or \
            parity == 'pE' or \
-           parity == 'sE', 'Invalid prefix: "%s".' % str(prefix)
+           parity == 'sE', \
+           'Invalid value: prefix : Expected %(expect)s : %(actual)s.' % {
+                                                                          'expect': '"N" OR "pO" OR "sO" OR "pE" OR "sE"',
+                                                                          'actual': str(prefix),
+                                                                         }
+    assert b_validate(prefix, fail_empty=False) == True, \
+        'Invalid b_string : prefix : %(actual)s' % {'actual': str(prefix)}
+    
+    assert b_validate(suffix, fail_empty=False) == True, \
+        'Invalid b_string : suffix : %(actual)s' % {'actual': str(suffix)}
     
     t = ''
     for c in (instr):
