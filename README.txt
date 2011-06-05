@@ -96,8 +96,6 @@ Rejected funtions include:
 Functions on my TODO list:
     b_to_str - My reason for rejecting b_to_file depends on something like this :p
 
-Python3 compatability is not fully there any more. Must fix!
-
 If anybody has any tips, advice or general abuse concerning Binstr then please feel
 free to send me an email or even get on GitHub and contribute.
 

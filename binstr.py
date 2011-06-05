@@ -481,7 +481,7 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     b = ''
     while a:
         b += str(a % 2)
-        a /= 2
+        a = int(a / 2)
     t = b[::-1]
     del a, b
     
@@ -552,7 +552,7 @@ def frac_to_b(num=0.0, width=8, endian='big'): # {{{
     b = ''
     while a:
         b += str(a % 2)
-        a /= 2
+        a = int(a / 2)
     t = b[::-1]
     del a, b
     
@@ -1004,7 +1004,7 @@ def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad=
     del i, A, Ac, lA_c, bits_per_char
     
     # Add padding
-    if len(pad): t += pad * ((group_size_bytes - ((lA / bits_per_byte) % group_size_bytes)) % group_size_bytes)
+    if len(pad): t += pad * int((group_size_bytes - ((lA / bits_per_byte) % group_size_bytes)) % group_size_bytes)
     
     return t
     # }}} End of b_to_baseX()
