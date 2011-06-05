@@ -86,15 +86,13 @@ just in case anybody is interested.
 
 Rejected funtions include:
     deblockify - Use str().replace()
-    b_to_file - Use file().write(<string>, 'wb')
+    b_to_file - Use file().write(b_to_str(<b_string>), 'wb')
     file_to_b - Use str_to_b(open(<path>, 'rb').read())
     b_log, b_exp, etc... - Use the proper math functions
     b_sub - Use b_add() with b_not for Two's compliment representaion.
     b_div - Use b_mul with inverse
     b_rotl, b_rotr - Use Python slices
-
-Functions on my TODO list:
-    b_to_str - My reason for rejecting b_to_file depends on something like this :p
+    b_reverse - Use <string>[::-1] E.g. '0101'[::-1] returns '1010'
 
 If anybody has any tips, advice or general abuse concerning Binstr then please feel
 free to send me an email or even get on GitHub and contribute.
