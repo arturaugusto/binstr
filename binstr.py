@@ -672,6 +672,59 @@ def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity=
     return t
     # }}} End of str_to_b()
 
+def b_to_str(A='', align='left', b_pad='0'): # {{{
+    '''
+    Convert a b_string to an ASCII string suitable for writing to a file in
+      binary mode.
+    
+    The input will be padded to a multiple of 8 bits long and can be controlled
+      with the arguments align and b_pad.
+
+    E.g. b_to_str() returns ''
+         b_to_str('') returns ''
+         b_to_str('0') returns '\\x00'
+         b_to_str('1') returns '\\x80'
+         b_to_str('01010101') returns 'U'
+         b_to_str('011000010110001001100011') returns 'abc'
+         b_to_str('0110000101100010011000111') returns 'abc\\x80'
+    '''
+    assert b_validate(A, fail_empty=False) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(align)),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert type(b_pad) is str, \
+        'Invalid type : b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(b_pad)),
+                                                                    }
+    
+    assert b_pad == '0' or b_pad == '1', \
+        'Invalid value: b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"0" OR "1"',
+                                                                     'actual': str(len(b_pad)),
+                                                                    }
+    
+    # Pad out the input b_string to be a multiple of 8 (bits_per_byte) bits long.
+    if align == 'left': A = A + b_pad * ((8 - (len(A) % 8)) % 8)
+    else:               A = b_pad * ((8 - (len(A) % 8)) % 8) + A
+    
+    t = ''
+    for i in range(0, len(A), 8): t += chr(int(A[i:i+8], 2))
+
+    return t
+    # }}} End of str_to_b()
+
 def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
     '''
     Convert from another base to binary coding.
@@ -913,8 +966,8 @@ def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad=
     b = bits_per_byte
     c = a * b
     while b: a, b = b, a % b
-    group_size_bits = c / a                                 # Number of bits in each group
-    group_size_bytes = group_size_bits / bits_per_byte      # Number of bytes per group
+    group_size_bits = int(c / a)                            # Number of bits in each group
+    group_size_bytes = int(group_size_bits / bits_per_byte) # Number of bytes per group
     del a, b, c, group_size_bits
     
     # Pad out the input b_string to be a multiple of 8 (bits_per_byte) bits long.
@@ -933,7 +986,7 @@ def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad=
     del i, A, Ac, lA_c, bits_per_char
     
     # Add padding
-    if len(pad): t += pad * int((group_size_bytes - ((lA / bits_per_byte) % group_size_bytes)) % group_size_bytes)
+    if len(pad): t += pad * ((group_size_bytes - (int(lA / bits_per_byte) % group_size_bytes)) % group_size_bytes)
     
     return t
     # }}} End of b_to_baseX()
@@ -1353,7 +1406,7 @@ def run_self_test(): # {{{
     
     # }}} End of Logical Operations
     
-    # Convertions To Binary Strings {{{
+    # Convertions To & From Binary Strings {{{
     
     print('\nint_to_b()...')
     print(int_to_b.__doc__)
@@ -1390,7 +1443,68 @@ def run_self_test(): # {{{
     except AssertionError as e:
         print(e)
     
-    # }}} End of Convertions To Binary Strings
+    print('\nb_to_str()...')
+    print(b_to_str.__doc__)
+    try:
+        assert b_to_str() == '',                                                    'FAIL : b_to_str : 0'
+        assert b_to_str('') == '',                                                  'FAIL : b_to_str : 1'
+        assert b_to_str('0') == '\x00',                                             'FAIL : b_to_str : 2'
+        assert b_to_str('1') == '\x80',                                             'FAIL : b_to_str : 3'
+        assert b_to_str('01010101') == 'U',                                         'FAIL : b_to_str : 4'
+        assert b_to_str('011000010110001001100011') == 'abc',                       'FAIL : b_to_str : 5'
+        assert b_to_str('0110000101100010011000111') == 'abc\x80',                  'FAIL : b_to_str : 6'
+    except AssertionError as e:
+        print(e)
+    
+    print('\nbaseX_to_b()...')
+    print(baseX_to_b.__doc__)
+    try:
+        assert baseX_to_b() == '000000',                                            'FAIL : baseX_to_b : 0'
+        assert baseX_to_b('') == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
+                                                                                    'FAIL : baseX_to_b : 1'
+        assert baseX_to_b('', base=4) == '0123',                                    'FAIL : baseX_to_b : 2'
+        assert baseX_to_b('', base=8) == '01234567',                                'FAIL : baseX_to_b : 3'
+        assert baseX_to_b('', base=16) == '0123456789ABCDEF',                       'FAIL : baseX_to_b : 4'
+        assert baseX_to_b('', base=32) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',       'FAIL : baseX_to_b : 5'
+        assert baseX_to_b('', base=64) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
+                                                                                    'FAIL : baseX_to_b : 6'
+        assert baseX_to_b('0123', base=4) == '00011011',                            'FAIL : baseX_to_b : 7'
+        assert baseX_to_b('01234567', base=8) == '000001010011100101110111',        'FAIL : baseX_to_b : 8'
+        assert baseX_to_b('05AF', base=16) == '0000010110101111',                   'FAIL : baseX_to_b : 9'
+        assert baseX_to_b('AZ27', base=32) == '00000110011101011111',               'FAIL : baseX_to_b : a'
+        assert baseX_to_b('TWFu', base=64) == '010011010110000101101110',           'FAIL : baseX_to_b : b'
+    except AssertionError as e:
+        print(e)
+    
+    print('\nb_to_baseX()...')
+    print(b_to_baseX.__doc__)
+    try:
+        assert b_to_baseX() == 'AA==',                                              'FAIL : baseX_to_b : 0'
+        assert b_to_baseX('') == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
+                                                                                    'FAIL : baseX_to_b : 1'
+        assert b_to_baseX('', base=4) == '0123',                                    'FAIL : baseX_to_b : 2'
+        assert b_to_baseX('', base=8) == '01234567',                                'FAIL : baseX_to_b : 3'
+        assert b_to_baseX('', base=16) == '0123456789ABCDEF',                       'FAIL : baseX_to_b : 4'
+        assert b_to_baseX('', base=32) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',       'FAIL : baseX_to_b : 5'
+        assert b_to_baseX('', base=64) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
+                                                                                    'FAIL : baseX_to_b : 6'
+        assert b_to_baseX('00011011', base=4) == '0123',                            'FAIL : baseX_to_b : 7'
+        assert b_to_baseX('000110111', base=4) == '01232000',                       'FAIL : baseX_to_b : 8'
+        assert b_to_baseX('0001101110', base=4) == '01232000',                      'FAIL : baseX_to_b : 9'
+        assert b_to_baseX('000001010011100101110111', base=8) == '01234567',        'FAIL : baseX_to_b : a'
+        assert b_to_baseX('0000010110101111', base=16) == '05AF',                   'FAIL : baseX_to_b : b'
+        assert b_to_baseX('0000010110101111', base=32) == 'AWXQ===',                'FAIL : baseX_to_b : c'
+        assert b_to_baseX(int_to_b(int('14FB9C03D97E', 16), width=48)) == 'FPucA9l+', \
+                                                                                    'FAIL : baseX_to_b : d'
+        assert b_to_baseX(int_to_b(int('14FB9C03D9', 16), width=40)) == 'FPucA9k=', 'FAIL : baseX_to_b : e'
+        assert b_to_baseX(int_to_b(int('14FB9C03', 16), width=32)) == 'FPucAw==',   'FAIL : baseX_to_b : f'
+        assert b_to_baseX(int_to_b(int('14FB9C03', 16), width=32), pad='') == 'FPucAw', \
+                                                                                    'FAIL : baseX_to_b : 10'
+        assert b_to_baseX('00011011', base=4, alphabet='abcd') == 'abcd',           'FAIL : baseX_to_b : 12'
+    except AssertionError as e:
+        print(e)
+    
+    # }}} End of Convertions To & From Binary Strings
     
     # Gray Conversion {{{
     
@@ -1437,58 +1551,6 @@ def run_self_test(): # {{{
         print(e)
     
     # }}} End of Arithmetic Operations
-    
-    # Base Conversion {{{
-    
-    print('\nb_to_baseX()...')
-    print(b_to_baseX.__doc__)
-    try:
-        assert b_to_baseX() == 'AA==',                                              'FAIL : baseX_to_b : 0'
-        assert b_to_baseX('') == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
-                                                                                    'FAIL : baseX_to_b : 1'
-        assert b_to_baseX('', base=4) == '0123',                                    'FAIL : baseX_to_b : 2'
-        assert b_to_baseX('', base=8) == '01234567',                                'FAIL : baseX_to_b : 3'
-        assert b_to_baseX('', base=16) == '0123456789ABCDEF',                       'FAIL : baseX_to_b : 4'
-        assert b_to_baseX('', base=32) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',       'FAIL : baseX_to_b : 5'
-        assert b_to_baseX('', base=64) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
-                                                                                    'FAIL : baseX_to_b : 6'
-        assert b_to_baseX('00011011', base=4) == '0123',                            'FAIL : baseX_to_b : 7'
-        assert b_to_baseX('000110111', base=4) == '01232000',                       'FAIL : baseX_to_b : 8'
-        assert b_to_baseX('0001101110', base=4) == '01232000',                      'FAIL : baseX_to_b : 9'
-        assert b_to_baseX('000001010011100101110111', base=8) == '01234567',        'FAIL : baseX_to_b : a'
-        assert b_to_baseX('0000010110101111', base=16) == '05AF',                   'FAIL : baseX_to_b : b'
-        assert b_to_baseX('0000010110101111', base=32) == 'AWXQ===',                'FAIL : baseX_to_b : c'
-        assert b_to_baseX(int_to_b(int('14FB9C03D97E', 16), width=48)) == 'FPucA9l+', \
-                                                                                    'FAIL : baseX_to_b : d'
-        assert b_to_baseX(int_to_b(int('14FB9C03D9', 16), width=40)) == 'FPucA9k=', 'FAIL : baseX_to_b : e'
-        assert b_to_baseX(int_to_b(int('14FB9C03', 16), width=32)) == 'FPucAw==',   'FAIL : baseX_to_b : f'
-        assert b_to_baseX(int_to_b(int('14FB9C03', 16), width=32), pad='') == 'FPucAw', \
-                                                                                    'FAIL : baseX_to_b : 10'
-        assert b_to_baseX('00011011', base=4, alphabet='abcd') == 'abcd',           'FAIL : baseX_to_b : 12'
-    except AssertionError as e:
-        print(e)
-    
-    print('\nbaseX_to_b()...')
-    print(baseX_to_b.__doc__)
-    try:
-        assert baseX_to_b() == '000000',                                            'FAIL : baseX_to_b : 0'
-        assert baseX_to_b('') == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
-                                                                                    'FAIL : baseX_to_b : 1'
-        assert baseX_to_b('', base=4) == '0123',                                    'FAIL : baseX_to_b : 2'
-        assert baseX_to_b('', base=8) == '01234567',                                'FAIL : baseX_to_b : 3'
-        assert baseX_to_b('', base=16) == '0123456789ABCDEF',                       'FAIL : baseX_to_b : 4'
-        assert baseX_to_b('', base=32) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',       'FAIL : baseX_to_b : 5'
-        assert baseX_to_b('', base=64) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
-                                                                                    'FAIL : baseX_to_b : 6'
-        assert baseX_to_b('0123', base=4) == '00011011',                            'FAIL : baseX_to_b : 7'
-        assert baseX_to_b('01234567', base=8) == '000001010011100101110111',        'FAIL : baseX_to_b : 8'
-        assert baseX_to_b('05AF', base=16) == '0000010110101111',                   'FAIL : baseX_to_b : 9'
-        assert baseX_to_b('AZ27', base=32) == '00000110011101011111',               'FAIL : baseX_to_b : a'
-        assert baseX_to_b('TWFu', base=64) == '010011010110000101101110',           'FAIL : baseX_to_b : b'
-    except AssertionError as e:
-        print(e)
-    
-    # }}} End of Base Conversion
     
     # Miscellaneous Functions {{{
     
