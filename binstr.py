@@ -402,7 +402,7 @@ def b_lnxor(A='0'): #{{{
 
 # }}} End of Logical Operations
 
-# Convertions To Binary Strings {{{
+# Convertions To & From Binary Strings {{{
 
 def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     '''
@@ -672,7 +672,273 @@ def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity=
     return t
     # }}} End of str_to_b()
 
-# }}} End of Convertions To Binary Strings
+def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
+    '''
+    Convert from another base to binary coding.
+    
+    This is performs to opposite function to b_to_baseX().
+    The input base can be either 4, 8, 16, 32 or 64 (default).
+    A user-defined alphabet can be supplied containing any characters in any
+      order as long at the length is equal to the base using the alphabet
+      argument.
+    Supplying an empty input string will return in the alphabet which is used
+      for that base.
+    The default alphabets for bases 32 and 64 are taken from RCF 3548 and
+      the alphabets used for bases 4, 8 and 16 are standard.
+    If a character is used in the input string it must be specified using the
+      pad argument.
+    
+    E.g. baseX_to_b() returns '00000000'
+         baseX_to_b('') returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+         baseX_to_b('', base=4) returns '0123'
+         baseX_to_b('', base=8) returns '01234567'
+         baseX_to_b('', base=16) returns '0123456789ABCDEF'
+         baseX_to_b('', base=32) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+         baseX_to_b('', base=64) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+         baseX_to_b('0123', base=4) returns '00011011'
+         baseX_to_b('01234567', base=8) returns '000001010011100101110111'
+         baseX_to_b('05AF', base=16) returns '0000010110101111'
+         baseX_to_b('AZ27', base=32) returns '00000110011101011111'
+         baseX_to_b('TWFu', base=64) returns '010011010110000101101110'
+    '''
+    
+    # These are the default alphabets.
+    # 4 is standard radix-4 notation.
+    # 8 is standard octal notation.
+    # 16 is standard hexadecimal notation (uppercase). This also appears in RFC 3548.
+    # 32 and 64 are taken from RFC 3548.
+    base_alphabets = {
+                      '4'  : '0123',
+                      '8'  : '01234567',
+                      '16' : '0123456789ABCDEF',
+                      '32' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',
+                      '64' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+                     }
+    
+    assert type(base) is int, \
+        'Invalid type : base : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': str(type(int())),
+                                                                    'actual': str(type(base)),
+                                                                   }
+    
+    assert base in [4, 8, 16, 32, 64], \
+        'Invalid value: base : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': '4 OR 8 OR 16 OR 32 OR 64',
+                                                                    'actual': str(base),
+                                                                   }
+    
+    assert type(pad) is str, \
+        'Invalid type : pad : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': str(type(str())),
+                                                                   'actual': str(type(pad)),
+                                                                  }
+    
+    assert len(pad) <= 1, \
+        'Invalid value: pad : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': 'len(pad) <= 1',
+                                                                   'actual': str(len(pad)),
+                                                                  }
+    
+    assert type(alphabet) is str, \
+        'Invalid type : alphabet : Expected %(expect)s : %(actual)s' % {
+                                                                        'expect': str(type(str())),
+                                                                        'actual': str(type(alphabet)),
+                                                                       }
+    
+    if not len(alphabet): alphabet = base_alphabets[str(base)] # Allow user to specify their own alphabet else use default.
+    assert len(alphabet) == base, \
+        'Invalid value: alphabet : Expected %(expect)s : %(actual)s' % {
+                                                                        'expect': 'len(alphabet) == base',
+                                                                        'actual': str(len(alphabet)),
+                                                                       }
+    
+    # Return the active alphabet on empty input string.
+    if not len(instr): return alphabet
+    
+    if len(pad): instr = instr.rstrip(pad) # Remove padding characters
+
+    # Validate instr
+    from re import compile as re_compile
+    pattern = re_compile('[^' + alphabet + ']')
+    assert bool(pattern.search(instr)) == False, \
+        'Invalid value: instr : Contains characters not in given alphabet'
+    del re_compile, pattern
+    
+    from math import log
+    bits_per_char = int(log(base, 2)) # Calculate the number of bits each character will represent.
+    del log
+    
+    # Generate string of new base.
+    t = ''
+    for c in instr: t += int_to_b(alphabet.find(c), width=bits_per_char)
+    
+    return t
+    # }}} End of baseX_to_b()
+
+def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad='0'): # {{{
+    '''
+    Convert from binary coding to another base.
+    
+    The input string will ALWAYS be padded out to a multiple of 8 bits.
+    The alignment of this padding can be controlled with the align argument,
+      which can either be 'left' (default) or 'right'.
+    The padding digit can be controlled be the b_pad argument which can either
+      be '0' (default) or '1'.
+    
+    The base used can either be 4, 8, 16, 32 or 64 (default) and is controlled
+      by the base argument.
+    A user-defined alphabet can be supplied containing any characters in any
+      order as long at the length is equal to the base using the alphabet
+      argument.
+    Supplying an empty input string will return in the alphabet which is used
+      for that base.
+    The default alphabets for bases 32 and 64 are taken from RCF 3548 and
+      the alphabets used for bases 4, 8 and 16 are standard.
+    Note that base 32 in RFC 3548 is not compatible with Python's
+      int(<input_string>, 32) function which uses 0-9,A-V.
+    The highest base that Python's int() function supports is 36 (0-9,A-Z).
+    
+    The padding character is '=' by default though this can be changed with the
+      pad argument.
+    This padding can be turned off by setting pad to an empty string.
+    
+    E.g. b_to_baseX() returns 'AA=='
+         b_to_baseX('') returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+         b_to_baseX('', base=4) returns '0123'
+         b_to_baseX('', base=8) returns '01234567'
+         b_to_baseX('', base=16) returns '0123456789ABCDEF'
+         b_to_baseX('', base=32) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+         b_to_baseX('', base=64) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+         b_to_baseX('00011011', base=4) returns '0123'
+         b_to_baseX('000110111', base=4) returns '01232000'
+         b_to_baseX('0001101110', base=4) returns '01232000'
+         b_to_baseX('000001010011100101110111', base=8) returns '01234567'
+         b_to_baseX('0000010110101111', base=16) returns '05AF'
+         b_to_baseX('0000010110101111', base=32) returns 'AWXQ==='
+         b_to_baseX(int_to_b(int('14FB9C03D97E', 16), width=48)) returns 'FPucA9l+'
+         b_to_baseX(int_to_b(int('14FB9C03D9', 16), width=40)) returns 'FPucA9k='
+         b_to_baseX(int_to_b(int('14FB9C03', 16), width=32)) returns 'FPucAw=='
+         b_to_baseX(int_to_b(int('14FB9C03', 16), width=32), pad='') returns 'FPucAw'
+         b_to_baseX('00011011', base=4, alphabet='abcd') returns 'abcd'
+    '''
+    
+    # These are the default alphabets.
+    # 4 is standard radix-4 notation.
+    # 8 is standard octal notation.
+    # 16 is standard hexadecimal notation (uppercase). This also appears in RFC 3548.
+    # 32 and 64 are taken from RFC 3548.
+    base_alphabets = {
+                      '4'  : '0123',
+                      '8'  : '01234567',
+                      '16' : '0123456789ABCDEF',
+                      '32' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',
+                      '64' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+                     }
+    
+    assert b_validate(A, fail_empty=False) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(base) is int, \
+        'Invalid type : base : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': str(type(int())),
+                                                                    'actual': str(type(base)),
+                                                                   }
+    
+    assert base in [4, 8, 16, 32, 64], \
+        'Invalid value: base : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': '4 OR 8 OR 16 OR 32 OR 64',
+                                                                    'actual': str(base),
+                                                                   }
+    
+    assert type(pad) is str, \
+        'Invalid type : pad : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': str(type(str())),
+                                                                   'actual': str(type(pad)),
+                                                                  }
+    
+    assert len(pad) <= 1, \
+        'Invalid value: pad : Expected %(expect)s : %(actual)s' % {
+                                                                   'expect': 'len(pad) <= 1',
+                                                                   'actual': str(len(pad)),
+                                                                  }
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(align)),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert type(b_pad) is str, \
+        'Invalid type : b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(b_pad)),
+                                                                    }
+    
+    assert b_pad == '0' or b_pad == '1', \
+        'Invalid value: b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"0" OR "1"',
+                                                                     'actual': str(len(b_pad)),
+                                                                    }
+    
+    assert type(alphabet) is str, \
+        'Invalid type : alphabet : Expected %(expect)s : %(actual)s' % {
+                                                                        'expect': str(type(str())),
+                                                                        'actual': str(type(alphabet)),
+                                                                       }
+    
+    if not len(alphabet): alphabet = base_alphabets[str(base)] # Allow user to specify their own alphabet else use default.
+    assert len(alphabet) == base, \
+        'Invalid value: alphabet : Expected %(expect)s : %(actual)s' % {
+                                                                        'expect': 'len(alphabet) == base',
+                                                                        'actual': str(len(alphabet)),
+                                                                       }
+    
+    # Return the active alphabet on empty input string.
+    if not len(A): return alphabet
+    
+    from math import log
+    bits_per_char = int(log(base, 2)) # Calculate the number of bits each character will represent.
+    del log
+    
+    bits_per_byte = 8 # Yes. this is obvious but I think it makes the following code more readable.
+    
+    # Calculate lowest common multiple using Euclid's method which is the group size in bits.
+    a = bits_per_char
+    b = bits_per_byte
+    c = a * b
+    while b: a, b = b, a % b
+    group_size_bits = c / a                                 # Number of bits in each group
+    group_size_bytes = group_size_bits / bits_per_byte      # Number of bytes per group
+    del a, b, c, group_size_bits
+    
+    # Pad out the input b_string to be a multiple of 8 (bits_per_byte) bits long.
+    lA = len(A)
+    if align == 'left': A = A + b_pad * ((bits_per_byte - (lA % bits_per_byte)) % bits_per_byte)
+    else:               A = b_pad * ((bits_per_byte - (lA % bits_per_byte)) % bits_per_byte) + A
+    lA = len(A)
+    
+    # Make a temporary A sting which is padded on the right with zeros to make it a multiple of bits_per_char bits.
+    Ac = A + '0' * ((bits_per_char - (lA % bits_per_char)) % bits_per_char)
+    lA_c = len(Ac)
+    
+    # Generate string of new base.
+    t = ''
+    for i in range(0, lA_c, bits_per_char): t += alphabet[int(Ac[i:i+bits_per_char], 2)]
+    del i, A, Ac, lA_c, bits_per_char
+    
+    # Add padding
+    if len(pad): t += pad * int((group_size_bytes - ((lA / bits_per_byte) % group_size_bytes)) % group_size_bytes)
+    
+    return t
+    # }}} End of b_to_baseX()
+
+# }}} End of Convertions To & From Binary Strings
 
 # Gray Conversion {{{
 
@@ -843,276 +1109,6 @@ def b_mul(A='00000000', B='00000000', endian='big'): # {{{
     # }}} End of b_mul()
 
 # }}} End of Arithmetic Operations
-
-# Base Conversion {{{
-
-def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad='0'): # {{{
-    '''
-    Convert from binary coding to another base.
-    
-    The input string will ALWAYS be padded out to a multiple of 8 bits.
-    The alignment of this padding can be controlled with the align argument,
-      which can either be 'left' (default) or 'right'.
-    The padding digit can be controlled be the b_pad argument which can either
-      be '0' (default) or '1'.
-    
-    The base used can either be 4, 8, 16, 32 or 64 (default) and is controlled
-      by the base argument.
-    A user-defined alphabet can be supplied containing any characters in any
-      order as long at the length is equal to the base using the alphabet
-      argument.
-    Supplying an empty input string will return in the alphabet which is used
-      for that base.
-    The default alphabets for bases 32 and 64 are taken from RCF 3548 and
-      the alphabets used for bases 4, 8 and 16 are standard.
-    Note that base 32 in RFC 3548 is not compatible with Python's
-      int(<input_string>, 32) function which uses 0-9,A-V.
-    The highest base that Python's int() function supports is 36 (0-9,A-Z).
-    
-    The padding character is '=' by default though this can be changed with the
-      pad argument.
-    This padding can be turned off by setting pad to an empty string.
-    
-    E.g. b_to_baseX() returns 'AA=='
-         b_to_baseX('') returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-         b_to_baseX('', base=4) returns '0123'
-         b_to_baseX('', base=8) returns '01234567'
-         b_to_baseX('', base=16) returns '0123456789ABCDEF'
-         b_to_baseX('', base=32) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
-         b_to_baseX('', base=64) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-         b_to_baseX('00011011', base=4) returns '0123'
-         b_to_baseX('000110111', base=4) returns '01232000'
-         b_to_baseX('0001101110', base=4) returns '01232000'
-         b_to_baseX('000001010011100101110111', base=8) returns '01234567'
-         b_to_baseX('0000010110101111', base=16) returns '05AF'
-         b_to_baseX('0000010110101111', base=32) returns 'AWXQ==='
-         b_to_baseX(int_to_b(int('14FB9C03D97E', 16), width=48)) returns 'FPucA9l+'
-         b_to_baseX(int_to_b(int('14FB9C03D9', 16), width=40)) returns 'FPucA9k='
-         b_to_baseX(int_to_b(int('14FB9C03', 16), width=32)) returns 'FPucAw=='
-         b_to_baseX(int_to_b(int('14FB9C03', 16), width=32), pad='') returns 'FPucAw'
-         b_to_baseX('00011011', base=4, alphabet='abcd') returns 'abcd'
-    '''
-    
-    # These are the default alphabets.
-    # 4 is standard radix-4 notation.
-    # 8 is standard octal notation.
-    # 16 is standard hexadecimal notation (uppercase). This also appears in RFC 3548.
-    # 32 and 64 are taken from RFC 3548.
-    base_alphabets = {
-                      '4'  : '0123',
-                      '8'  : '01234567',
-                      '16' : '0123456789ABCDEF',
-                      '32' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',
-                      '64' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
-                     }
-    
-    assert b_validate(A, fail_empty=False) == True, \
-        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
-    
-    assert type(base) is int, \
-        'Invalid type : base : Expected %(expect)s : %(actual)s' % {
-                                                                    'expect': str(type(int())),
-                                                                    'actual': str(type(base)),
-                                                                   }
-    
-    assert base in [4, 8, 16, 32, 64], \
-        'Invalid value: base : Expected %(expect)s : %(actual)s' % {
-                                                                    'expect': '4 OR 8 OR 16 OR 32 OR 64',
-                                                                    'actual': str(base),
-                                                                   }
-    
-    assert type(pad) is str, \
-        'Invalid type : pad : Expected %(expect)s : %(actual)s' % {
-                                                                   'expect': str(type(str())),
-                                                                   'actual': str(type(pad)),
-                                                                  }
-    
-    assert len(pad) <= 1, \
-        'Invalid value: pad : Expected %(expect)s : %(actual)s' % {
-                                                                   'expect': 'len(pad) <= 1',
-                                                                   'actual': str(len(pad)),
-                                                                  }
-    
-    assert type(align) is str, \
-        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type(str())),
-                                                                     'actual': str(type(align)),
-                                                                    }
-    
-    assert align == 'right' or align == 'left', \
-        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': '"left" OR "right"',
-                                                                     'actual': str(align),
-                                                                    }
-    
-    assert type(b_pad) is str, \
-        'Invalid type : b_pad : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type(str())),
-                                                                     'actual': str(type(b_pad)),
-                                                                    }
-    
-    assert b_pad == '0' or b_pad == '1', \
-        'Invalid value: b_pad : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': '"0" OR "1"',
-                                                                     'actual': str(len(b_pad)),
-                                                                    }
-    
-    assert type(alphabet) is str, \
-        'Invalid type : alphabet : Expected %(expect)s : %(actual)s' % {
-                                                                        'expect': str(type(str())),
-                                                                        'actual': str(type(alphabet)),
-                                                                       }
-    
-    if not len(alphabet): alphabet = base_alphabets[str(base)] # Allow user to specify their own alphabet else use default.
-    assert len(alphabet) == base, \
-        'Invalid value: alphabet : Expected %(expect)s : %(actual)s' % {
-                                                                        'expect': 'len(alphabet) == base',
-                                                                        'actual': str(len(alphabet)),
-                                                                       }
-    
-    # Return the active alphabet on empty input string.
-    if not len(A): return alphabet
-    
-    from math import log
-    bits_per_char = int(log(base, 2)) # Calculate the number of bits each character will represent.
-    del log
-    
-    bits_per_byte = 8 # Yes. this is obvious but I think it makes the following code more readable.
-    
-    # Calculate lowest common multiple using Euclid's method which is the group size in bits.
-    a = bits_per_char
-    b = bits_per_byte
-    c = a * b
-    while b: a, b = b, a % b
-    group_size_bits = c / a                                 # Number of bits in each group
-    group_size_bytes = group_size_bits / bits_per_byte      # Number of bytes per group
-    del a, b, c, group_size_bits
-    
-    # Pad out the input b_string to be a multiple of 8 (bits_per_byte) bits long.
-    lA = len(A)
-    if align == 'left': A = A + b_pad * ((bits_per_byte - (lA % bits_per_byte)) % bits_per_byte)
-    else:               A = b_pad * ((bits_per_byte - (lA % bits_per_byte)) % bits_per_byte) + A
-    lA = len(A)
-    
-    # Make a temporary A sting which is padded on the right with zeros to make it a multiple of bits_per_char bits.
-    Ac = A + '0' * ((bits_per_char - (lA % bits_per_char)) % bits_per_char)
-    lA_c = len(Ac)
-    
-    # Generate string of new base.
-    t = ''
-    for i in range(0, lA_c, bits_per_char): t += alphabet[int(Ac[i:i+bits_per_char], 2)]
-    del i, A, Ac, lA_c, bits_per_char
-    
-    # Add padding
-    if len(pad): t += pad * int((group_size_bytes - ((lA / bits_per_byte) % group_size_bytes)) % group_size_bytes)
-    
-    return t
-    # }}} End of b_to_baseX()
-
-def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
-    '''
-    Convert from another base to binary coding.
-    
-    This is performs to opposite function to b_to_baseX().
-    The input base can be either 4, 8, 16, 32 or 64 (default).
-    A user-defined alphabet can be supplied containing any characters in any
-      order as long at the length is equal to the base using the alphabet
-      argument.
-    Supplying an empty input string will return in the alphabet which is used
-      for that base.
-    The default alphabets for bases 32 and 64 are taken from RCF 3548 and
-      the alphabets used for bases 4, 8 and 16 are standard.
-    If a character is used in the input string it must be specified using the
-      pad argument.
-    
-    E.g. baseX_to_b() returns '00000000'
-         baseX_to_b('') returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-         baseX_to_b('', base=4) returns '0123'
-         baseX_to_b('', base=8) returns '01234567'
-         baseX_to_b('', base=16) returns '0123456789ABCDEF'
-         baseX_to_b('', base=32) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
-         baseX_to_b('', base=64) returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-         baseX_to_b('0123', base=4) returns '00011011'
-         baseX_to_b('01234567', base=8) returns '000001010011100101110111'
-         baseX_to_b('05AF', base=16) returns '0000010110101111'
-         baseX_to_b('AZ27', base=32) returns '00000110011101011111'
-         baseX_to_b('TWFu', base=64) returns '010011010110000101101110'
-    '''
-    
-    # These are the default alphabets.
-    # 4 is standard radix-4 notation.
-    # 8 is standard octal notation.
-    # 16 is standard hexadecimal notation (uppercase). This also appears in RFC 3548.
-    # 32 and 64 are taken from RFC 3548.
-    base_alphabets = {
-                      '4'  : '0123',
-                      '8'  : '01234567',
-                      '16' : '0123456789ABCDEF',
-                      '32' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',
-                      '64' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
-                     }
-    
-    assert type(base) is int, \
-        'Invalid type : base : Expected %(expect)s : %(actual)s' % {
-                                                                    'expect': str(type(int())),
-                                                                    'actual': str(type(base)),
-                                                                   }
-    
-    assert base in [4, 8, 16, 32, 64], \
-        'Invalid value: base : Expected %(expect)s : %(actual)s' % {
-                                                                    'expect': '4 OR 8 OR 16 OR 32 OR 64',
-                                                                    'actual': str(base),
-                                                                   }
-    
-    assert type(pad) is str, \
-        'Invalid type : pad : Expected %(expect)s : %(actual)s' % {
-                                                                   'expect': str(type(str())),
-                                                                   'actual': str(type(pad)),
-                                                                  }
-    
-    assert len(pad) <= 1, \
-        'Invalid value: pad : Expected %(expect)s : %(actual)s' % {
-                                                                   'expect': 'len(pad) <= 1',
-                                                                   'actual': str(len(pad)),
-                                                                  }
-    
-    assert type(alphabet) is str, \
-        'Invalid type : alphabet : Expected %(expect)s : %(actual)s' % {
-                                                                        'expect': str(type(str())),
-                                                                        'actual': str(type(alphabet)),
-                                                                       }
-    
-    if not len(alphabet): alphabet = base_alphabets[str(base)] # Allow user to specify their own alphabet else use default.
-    assert len(alphabet) == base, \
-        'Invalid value: alphabet : Expected %(expect)s : %(actual)s' % {
-                                                                        'expect': 'len(alphabet) == base',
-                                                                        'actual': str(len(alphabet)),
-                                                                       }
-    
-    # Return the active alphabet on empty input string.
-    if not len(instr): return alphabet
-    
-    if len(pad): instr = instr.rstrip(pad) # Remove padding characters
-
-    # Validate instr
-    from re import compile as re_compile
-    pattern = re_compile('[^' + alphabet + ']')
-    assert bool(pattern.search(instr)) == False, \
-        'Invalid value: instr : Contains characters not in given alphabet'
-    del re_compile, pattern
-    
-    from math import log
-    bits_per_char = int(log(base, 2)) # Calculate the number of bits each character will represent.
-    del log
-    
-    # Generate string of new base.
-    t = ''
-    for c in instr: t += int_to_b(alphabet.find(c), width=bits_per_char)
-    
-    return t
-    # }}} End of baseX_to_b()
-
-# }}} End of Base Conversion
 
 # Miscellaneous Functions {{{
 
