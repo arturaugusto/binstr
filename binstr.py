@@ -1280,6 +1280,7 @@ def run_self_test(): # {{{
     
     # Bitwise Operations {{{
     
+    # b_and {{{
     print('\nb_and()...')
     print(b_and.__doc__)
     try:
@@ -1288,7 +1289,9 @@ def run_self_test(): # {{{
         assert b_and('01010000', '0011', align='left') == '00010000',               'FAIL : b_and : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_and
     
+    # b_nand {{{
     print('\nb_nand()...')
     print(b_nand.__doc__)
     try:
@@ -1297,7 +1300,9 @@ def run_self_test(): # {{{
         assert b_nand('01010000', '0011', align='left') == '11101111',              'FAIL : b_nand : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_nand
     
+    # b_or {{{
     print('\nb_or()...')
     print(b_or.__doc__)
     try:
@@ -1306,7 +1311,9 @@ def run_self_test(): # {{{
         assert b_or('01010000', '0011', align='left') == '01110000',                'FAIL : b_or : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_or
     
+    # b_nor {{{
     print('\nb_nor()...')
     print(b_nor.__doc__)
     try:
@@ -1315,7 +1322,9 @@ def run_self_test(): # {{{
         assert b_nor('01010000', '0011', align='left') == '10001111',               'FAIL : b_nor : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_nor
     
+    # b_xor {{{
     print('\nb_xor()...')
     print(b_xor.__doc__)
     try:
@@ -1324,7 +1333,9 @@ def run_self_test(): # {{{
         assert b_xor('01010000', '0011', align='left') == '01100000',               'FAIL : b_xor : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_xor
     
+    # b_nxor {{{
     print('\nb_nxor()...')
     print(b_nxor.__doc__)
     try:
@@ -1333,7 +1344,9 @@ def run_self_test(): # {{{
         assert b_nxor('01010000', '0011', align='left') == '10011111',              'FAIL : b_nxor : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_nxor
     
+    # b_not {{{
     print('\nb_not()...')
     print(b_not.__doc__)
     try:
@@ -1341,11 +1354,13 @@ def run_self_test(): # {{{
         assert b_not('0101') == '1010',                                             'FAIL : b_not : 1'
     except AssertionError as e:
         print(e)
+    # }}} End of b_not
     
     # }}} End of Bitwise Operations
     
     # Logical Operations {{{
     
+    # b_land {{{
     print('\nb_land()...')
     print(b_land.__doc__)
     try:
@@ -1354,7 +1369,9 @@ def run_self_test(): # {{{
         assert b_land('00000000') == '0',                                           'FAIL : b_land : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_land
     
+    # b_lnand {{{
     print('\nb_lnand()...')
     print(b_lnand.__doc__)
     try:
@@ -1363,7 +1380,9 @@ def run_self_test(): # {{{
         assert b_lnand('00000000') == '1',                                          'FAIL : b_lnand : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_lnand
     
+    # b_lor {{{
     print('\nb_lor()...')
     print(b_lor.__doc__)
     try:
@@ -1372,7 +1391,9 @@ def run_self_test(): # {{{
         assert b_lor('00000000') == '0',                                            'FAIL : b_lor : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_lor
     
+    # b_lnor {{{
     print('\nb_lnor()...')
     print(b_lnor.__doc__)
     try:
@@ -1381,7 +1402,9 @@ def run_self_test(): # {{{
         assert b_lnor('00000000') == '1',                                           'FAIL : b_lnor : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_lnor
     
+    # b_lxor {{{
     print('\nb_lxor()...')
     print(b_lxor.__doc__)
     try:
@@ -1392,7 +1415,9 @@ def run_self_test(): # {{{
         assert b_lxor('00000000') == '0',                                           'FAIL : b_lxor : 4'
     except AssertionError as e:
         print(e)
+    # }}} End of b_lxor
     
+    # b_lnxor {{{
     print('\nb_lnxor()...')
     print(b_lnxor.__doc__)
     try:
@@ -1403,11 +1428,13 @@ def run_self_test(): # {{{
         assert b_lnxor('00000000') == '1',                                          'FAIL : b_lnxor : 4'
     except AssertionError as e:
         print(e)
+    # }}} End of b_lnxor
     
     # }}} End of Logical Operations
     
     # Convertions To & From Binary Strings {{{
     
+    # int_to_b {{{
     print('\nint_to_b()...')
     print(int_to_b.__doc__)
     try:
@@ -1418,7 +1445,9 @@ def run_self_test(): # {{{
         assert int_to_b(0xF5, width=7, chop='least') == '1111010',                  'FAIL : int_to_b : 4'
     except AssertionError as e:
         print(e)
+    # }}} End of int_to_b
     
+    # frac_to_b {{{
     print('\nfrac_to_b()...')
     print(frac_to_b.__doc__)
     try:
@@ -1427,7 +1456,9 @@ def run_self_test(): # {{{
         assert frac_to_b(0.5, width=10, endian='little') == '0000000001',           'FAIL : frac_to_b : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of frac_to_b
     
+    # str_to_b {{{
     print('\nstr_to_b()...')
     print(str_to_b.__doc__)
     try:
@@ -1442,7 +1473,9 @@ def run_self_test(): # {{{
         assert str_to_b('U', parity='sE') == '010101010',                           'FAIL : str_to_b : 8'
     except AssertionError as e:
         print(e)
+    # }}} End of str_to_b
     
+    # b_to_str {{{
     print('\nb_to_str()...')
     print(b_to_str.__doc__)
     try:
@@ -1455,7 +1488,9 @@ def run_self_test(): # {{{
         assert b_to_str('0110000101100010011000111') == 'abc\x80',                  'FAIL : b_to_str : 6'
     except AssertionError as e:
         print(e)
+    # }}} End of b_to_str
     
+    # baseX_to_b {{{
     print('\nbaseX_to_b()...')
     print(baseX_to_b.__doc__)
     try:
@@ -1475,7 +1510,9 @@ def run_self_test(): # {{{
         assert baseX_to_b('TWFu', base=64) == '010011010110000101101110',           'FAIL : baseX_to_b : b'
     except AssertionError as e:
         print(e)
+    # }}} End of baseX_to_b
     
+    # b_to_baseX {{{
     print('\nb_to_baseX()...')
     print(b_to_baseX.__doc__)
     try:
@@ -1503,11 +1540,13 @@ def run_self_test(): # {{{
         assert b_to_baseX('00011011', base=4, alphabet='abcd') == 'abcd',           'FAIL : baseX_to_b : 12'
     except AssertionError as e:
         print(e)
+    # }}} End of b_to_baseX
     
     # }}} End of Convertions To & From Binary Strings
     
     # Gray Conversion {{{
     
+    # b_bin_to_gray {{{
     print('\nb_bin_to_gray()...')
     print(b_bin_to_gray.__doc__)
     try:
@@ -1517,7 +1556,9 @@ def run_self_test(): # {{{
         assert b_bin_to_gray('1101', endian='little') == '0111',                    'FAIL : b_bin_to_gray : 3'
     except AssertionError as e:
         print(e)
+    # }}} End of b_bin_to_gray
     
+    # b_gray_to_bin {{{
     print('\nb_gray_to_bin()...')
     print(b_gray_to_bin.__doc__)
     try:
@@ -1527,11 +1568,13 @@ def run_self_test(): # {{{
         assert b_gray_to_bin('1101', endian='little') == '1011',                    'FAIL : b_gray_to_bin : 3'
     except AssertionError as e:
         print(e)
+    # }}} End of b_gray_to_bin
     
     # }}} End of Gray Conversion
     
     # Arithmetic Operations {{{
     
+    # b_add {{{
     print('\nb_add()...')
     print(b_add.__doc__)
     try:
@@ -1540,7 +1583,9 @@ def run_self_test(): # {{{
         assert b_add('0001', '0001', endian='little') == '00001',                   'FAIL : b_add : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_add
     
+    # b_mul {{{
     print('\nb_mul()...')
     print(b_mul.__doc__)
     try:
@@ -1549,11 +1594,13 @@ def run_self_test(): # {{{
         assert b_mul('0001', '0001', endian='little') == '00000010',                'FAIL : b_mul : 2'
     except AssertionError as e:
         print(e)
+    # }}} End of b_mul
     
     # }}} End of Arithmetic Operations
     
     # Miscellaneous Functions {{{
     
+    # b_blockify {{{
     print('\nb_blockify()...')
     print(b_blockify.__doc__)
     try:
@@ -1566,7 +1613,9 @@ def run_self_test(): # {{{
         assert b_blockify('0'*9, size=3) == '000 000 000',                          'FAIL : b_blockify : 6'
     except AssertionError as e:
         print(e)
+    # }}} End of b_blockify
     
+    # b_validate {{{
     print('\nb_validate()...')
     print(b_validate.__doc__)
     try:
@@ -1578,6 +1627,7 @@ def run_self_test(): # {{{
         assert b_validate('0101 0101') == False,                                    'FAIL : b_validate : 5'
     except AssertionError as e:
         print(e)
+    # }}} End of b_validate
     
     # }}} End of Miscellaneous Functions
     
