@@ -402,7 +402,7 @@ def b_lnxor(A='0'): #{{{
 
 # }}} End of Logical Operations
 
-# Convertions To & From Binary Strings {{{
+# Convertions To Binary Strings {{{
 
 def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     '''
@@ -495,40 +495,6 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     return t
     # }}} End of int_to_b()
 
-def b_to_int(A=0, endian='big'): # {{{
-    '''
-    Convert binary string of digits to an integer.
-    
-    The endianess is big by default but can be set to little to return a
-      bit reversal.
-    
-    This is basically just a wrapper for the inbuilt Python function int()
-      which is defined for completeness.
-       
-    E.g. b_to_int('00000000') returns 0
-         b_to_int('0101') returns 5
-         b_to_int('0101', endian='little') returns 10
-    '''
-    assert b_validate(A) == True, \
-        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
-    
-    assert type(endian) is str, \
-        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
-                                                                      'expect': str(type(str())),
-                                                                      'actual': str(type(endian)),
-                                                                     }
-    
-    assert endian == 'little' or endian == 'big', \
-        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
-                                                                      'expect': '"little" OR "big"',
-                                                                      'actual': str(endian),
-                                                                     }
-    t = ''
-    if endian == 'big': t = A
-    else:               t = A[::-1]
-    return int(t, 2)
-    # }}} End of b_to_int()
-
 def frac_to_b(num=0.0, width=8, endian='big'): # {{{
     '''
     Convert a positive float which is less than 1.0 to a binary string.
@@ -597,40 +563,6 @@ def frac_to_b(num=0.0, width=8, endian='big'): # {{{
     
     return t
     # }}} End of frac_to_b()
-
-def b_to_frac(A='', endian='big'): # {{{
-    '''
-    Convert a binary string to a positive float which is less than 1.0.
-    
-    The endianess is little by default but can be set to big to return a
-      bit reversal.
-    
-    E.g. b_to_frac('00000000') returns 0.0
-         b_to_frac('0101') returns 0.3125
-    '''
-    assert b_validate(A) == True, \
-        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
-    
-    assert type(endian) is str, \
-        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
-                                                                      'expect': str(type(str())),
-                                                                      'actual': str(type(endian)),
-                                                                     }
-    
-    assert endian == 'little' or endian == 'big', \
-        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
-                                                                      'expect': '"little" OR "big"',
-                                                                      'actual': str(endian),
-                                                                     }
-    
-    if endian == 'little': A = A[::-1]
-    
-    t = 0.0
-    for i, b in enumerate(A):
-        if b == '1': t += 1.0 / 2**(i+1)
-    
-    return t
-    # }}} End of b_to_frac()
 
 def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity='N'): # {{{
     '''
@@ -740,59 +672,6 @@ def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity=
     
     return t
     # }}} End of str_to_b()
-
-def b_to_str(A='', align='left', b_pad='0'): # {{{
-    '''
-    Convert a b_string to an ASCII string suitable for writing to a file in
-      binary mode.
-    
-    The input will be padded to a multiple of 8 bits long and can be controlled
-      with the arguments align and b_pad.
-
-    E.g. b_to_str() returns ''
-         b_to_str('') returns ''
-         b_to_str('0') returns '\\x00'
-         b_to_str('1') returns '\\x80'
-         b_to_str('01010101') returns 'U'
-         b_to_str('011000010110001001100011') returns 'abc'
-         b_to_str('0110000101100010011000111') returns 'abc\\x80'
-    '''
-    assert b_validate(A, fail_empty=False) == True, \
-        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
-    
-    assert type(align) is str, \
-        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type(str())),
-                                                                     'actual': str(type(align)),
-                                                                    }
-    
-    assert align == 'right' or align == 'left', \
-        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': '"left" OR "right"',
-                                                                     'actual': str(align),
-                                                                    }
-    
-    assert type(b_pad) is str, \
-        'Invalid type : b_pad : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type(str())),
-                                                                     'actual': str(type(b_pad)),
-                                                                    }
-    
-    assert b_pad == '0' or b_pad == '1', \
-        'Invalid value: b_pad : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': '"0" OR "1"',
-                                                                     'actual': str(len(b_pad)),
-                                                                    }
-    
-    # Pad out the input b_string to be a multiple of 8 (bits_per_byte) bits long.
-    if align == 'left': A = A + b_pad * ((8 - (len(A) % 8)) % 8)
-    else:               A = b_pad * ((8 - (len(A) % 8)) % 8) + A
-    
-    t = ''
-    for i in range(0, len(A), 8): t += chr(int(A[i:i+8], 2))
-       
-    return t
-    # }}} End of b_to_str()
 
 def bytes_to_b(inbytes='', char_width=8, endian='big', prefix='', suffix='', parity='N'): # {{{
     '''
@@ -907,62 +786,6 @@ def bytes_to_b(inbytes='', char_width=8, endian='big', prefix='', suffix='', par
     return t
     # }}} End of bytes_to_b()
 
-def b_to_bytes(A='', align='left', b_pad='0'): # {{{
-    '''
-    Convert a b_string to an byte sequence suitable for writing to a file in
-      binary mode.
-    
-    The input will be padded to a multiple of 8 bits long and can be controlled
-      with the arguments align and b_pad.
-
-    E.g. b_to_bytes() returns b''
-         b_to_bytes('') returns b''
-         b_to_bytes('0') returns b'\\x00'
-         b_to_bytes('1') returns b'\\x01'
-         b_to_bytes('01010101') returns b'U'
-         b_to_bytes('011000010110001001100011') returns b'abc'
-         b_to_bytes('0110000101100010011000111') returns b'abc\\x80'
-    '''
-    assert b_validate(A, fail_empty=False) == True, \
-        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
-    
-    assert type(align) is str, \
-        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type(str())),
-                                                                     'actual': str(type(align)),
-                                                                    }
-    
-    assert align == 'right' or align == 'left', \
-        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': '"left" OR "right"',
-                                                                     'actual': str(align),
-                                                                    }
-    
-    assert type(b_pad) is str, \
-        'Invalid type : b_pad : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': str(type(str())),
-                                                                     'actual': str(type(b_pad)),
-                                                                    }
-    
-    assert b_pad == '0' or b_pad == '1', \
-        'Invalid value: b_pad : Expected %(expect)s : %(actual)s' % {
-                                                                     'expect': '"0" OR "1"',
-                                                                     'actual': str(len(b_pad)),
-                                                                    }
-    
-    if type(bytes()) is str:
-        return b_to_str(A=A, align=align, b_pad=b_pad)
-    else:
-        # Pad out the input b_string to be a multiple of 8 (bits_per_byte) bits long.
-        if align == 'left': A = A + b_pad * ((8 - (len(A) % 8)) % 8)
-        else:               A = b_pad * ((8 - (len(A) % 8)) % 8) + A
-        
-        t = []
-        for i in range(0, len(A), 8): t.append(int(A[i:i+8], 2))
-        
-        return bytes(t)
-    # }}} End of b_to_bytes()
-
 def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
     '''
     Convert from another base to binary coding.
@@ -1065,6 +888,187 @@ def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
     
     return t
     # }}} End of baseX_to_b()
+
+# }}} End of Convertions To Binary Strings
+
+# Convertions From Binary Strings {{{
+
+def b_to_int(A=0, endian='big'): # {{{
+    '''
+    Convert binary string of digits to an integer.
+    
+    The endianess is big by default but can be set to little to return a
+      bit reversal.
+    
+    This is basically just a wrapper for the inbuilt Python function int()
+      which is defined for completeness.
+       
+    E.g. b_to_int('00000000') returns 0
+         b_to_int('0101') returns 5
+         b_to_int('0101', endian='little') returns 10
+    '''
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    t = ''
+    if endian == 'big': t = A
+    else:               t = A[::-1]
+    return int(t, 2)
+    # }}} End of b_to_int()
+
+def b_to_frac(A='', endian='big'): # {{{
+    '''
+    Convert a binary string to a positive float which is less than 1.0.
+    
+    The endianess is little by default but can be set to big to return a
+      bit reversal.
+    
+    E.g. b_to_frac('00000000') returns 0.0
+         b_to_frac('0101') returns 0.3125
+    '''
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    
+    if endian == 'little': A = A[::-1]
+    
+    t = 0.0
+    for i, b in enumerate(A):
+        if b == '1': t += 1.0 / 2**(i+1)
+    
+    return t
+    # }}} End of b_to_frac()
+
+def b_to_str(A='', align='left', b_pad='0'): # {{{
+    '''
+    Convert a b_string to an ASCII string suitable for writing to a file in
+      binary mode.
+    
+    The input will be padded to a multiple of 8 bits long and can be controlled
+      with the arguments align and b_pad.
+
+    E.g. b_to_str() returns ''
+         b_to_str('') returns ''
+         b_to_str('0') returns '\\x00'
+         b_to_str('1') returns '\\x80'
+         b_to_str('01010101') returns 'U'
+         b_to_str('011000010110001001100011') returns 'abc'
+         b_to_str('0110000101100010011000111') returns 'abc\\x80'
+    '''
+    assert b_validate(A, fail_empty=False) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(align)),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert type(b_pad) is str, \
+        'Invalid type : b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(b_pad)),
+                                                                    }
+    
+    assert b_pad == '0' or b_pad == '1', \
+        'Invalid value: b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"0" OR "1"',
+                                                                     'actual': str(len(b_pad)),
+                                                                    }
+    
+    # Pad out the input b_string to be a multiple of 8 (bits_per_byte) bits long.
+    if align == 'left': A = A + b_pad * ((8 - (len(A) % 8)) % 8)
+    else:               A = b_pad * ((8 - (len(A) % 8)) % 8) + A
+    
+    t = ''
+    for i in range(0, len(A), 8): t += chr(int(A[i:i+8], 2))
+       
+    return t
+    # }}} End of b_to_str()
+
+def b_to_bytes(A='', align='left', b_pad='0'): # {{{
+    '''
+    Convert a b_string to an byte sequence suitable for writing to a file in
+      binary mode.
+    
+    The input will be padded to a multiple of 8 bits long and can be controlled
+      with the arguments align and b_pad.
+
+    E.g. b_to_bytes() returns b''
+         b_to_bytes('') returns b''
+         b_to_bytes('0') returns b'\\x00'
+         b_to_bytes('1') returns b'\\x01'
+         b_to_bytes('01010101') returns b'U'
+         b_to_bytes('011000010110001001100011') returns b'abc'
+         b_to_bytes('0110000101100010011000111') returns b'abc\\x80'
+    '''
+    assert b_validate(A, fail_empty=False) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(align)),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert type(b_pad) is str, \
+        'Invalid type : b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(b_pad)),
+                                                                    }
+    
+    assert b_pad == '0' or b_pad == '1', \
+        'Invalid value: b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"0" OR "1"',
+                                                                     'actual': str(len(b_pad)),
+                                                                    }
+    
+    if type(bytes()) is str:
+        return b_to_str(A=A, align=align, b_pad=b_pad)
+    else:
+        # Pad out the input b_string to be a multiple of 8 (bits_per_byte) bits long.
+        if align == 'left': A = A + b_pad * ((8 - (len(A) % 8)) % 8)
+        else:               A = b_pad * ((8 - (len(A) % 8)) % 8) + A
+        
+        t = []
+        for i in range(0, len(A), 8): t.append(int(A[i:i+8], 2))
+        
+        return bytes(t)
+    # }}} End of b_to_bytes()
 
 def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad='0'): # {{{
     '''
@@ -1229,7 +1233,7 @@ def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad=
     return t
     # }}} End of b_to_baseX()
 
-# }}} End of Convertions To & From Binary Strings
+# }}} End of Convertions From Binary Strings
 
 # Gray Conversion {{{
 
@@ -1670,7 +1674,7 @@ def run_self_test(): # {{{
     
     # }}} End of Logical Operations
     
-    # Convertions To & From Binary Strings {{{
+    # Convertions To Binary Strings {{{
     
     # int_to_b {{{
     print('\nint_to_b()...')
@@ -1685,17 +1689,6 @@ def run_self_test(): # {{{
         print(e)
     # }}} End of int_to_b
     
-    # b_to_int {{{
-    print('\nb_to_int()...')
-    print(b_to_int.__doc__)
-    try:
-        assert b_to_int('00000000') == 0,                                           'FAIL : b_to_int : 0'
-        assert b_to_int('0101') == 5,                                               'FAIL : b_to_int : 1'
-        assert b_to_int('0101', endian='little') == 10,                             'FAIL : b_to_int : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_to_int
-    
     # frac_to_b {{{
     print('\nfrac_to_b()...')
     print(frac_to_b.__doc__)
@@ -1706,16 +1699,6 @@ def run_self_test(): # {{{
     except AssertionError as e:
         print(e)
     # }}} End of frac_to_b
-    
-    # b_to_frac {{{
-    print('\nb_to_frac()...')
-    print(b_to_frac.__doc__)
-    try:
-        assert b_to_frac('00000000') == 0.0,                                        'FAIL : b_to_frac : 0'
-        assert b_to_frac('0101') == 0.3125,                                         'FAIL : b_to_frac : 0'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_to_frac
     
     # str_to_b {{{
     print('\nstr_to_b()...')
@@ -1734,21 +1717,6 @@ def run_self_test(): # {{{
         print(e)
     # }}} End of str_to_b
     
-    # b_to_str {{{
-    print('\nb_to_str()...')
-    print(b_to_str.__doc__)
-    try:
-        assert b_to_str() == '',                                                    'FAIL : b_to_str : 0'
-        assert b_to_str('') == '',                                                  'FAIL : b_to_str : 1'
-        assert b_to_str('0') == '\x00',                                             'FAIL : b_to_str : 2'
-        assert b_to_str('1') == '\x80',                                             'FAIL : b_to_str : 3'
-        assert b_to_str('01010101') == 'U',                                         'FAIL : b_to_str : 4'
-        assert b_to_str('011000010110001001100011') == 'abc',                       'FAIL : b_to_str : 5'
-        assert b_to_str('0110000101100010011000111') == 'abc\x80',                  'FAIL : b_to_str : 6'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_to_str
-    
     # bytes_to_b {{{
     print('\nbytes_to_b()...')
     print(bytes_to_b.__doc__)
@@ -1765,21 +1733,6 @@ def run_self_test(): # {{{
     except AssertionError as e:
         print(e)
     # }}} End of bytes_to_b
-    
-    # b_to_bytes {{{
-    print('\nb_to_bytes()...')
-    print(b_to_bytes.__doc__)
-    try:
-        assert b_to_bytes() == b'',                                                    'FAIL : b_to_bytes : 0'
-        assert b_to_bytes('') == b'',                                                  'FAIL : b_to_bytes : 1'
-        assert b_to_bytes('0') == b'\x00',                                             'FAIL : b_to_bytes : 2'
-        assert b_to_bytes('1') == b'\x80',                                             'FAIL : b_to_bytes : 3'
-        assert b_to_bytes('01010101') == b'U',                                         'FAIL : b_to_bytes : 4'
-        assert b_to_bytes('011000010110001001100011') == b'abc',                       'FAIL : b_to_bytes : 5'
-        assert b_to_bytes('0110000101100010011000111') == b'abc\x80',                  'FAIL : b_to_bytes : 6'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_to_bytes
     
     # baseX_to_b {{{
     print('\nbaseX_to_b()...')
@@ -1802,6 +1755,61 @@ def run_self_test(): # {{{
     except AssertionError as e:
         print(e)
     # }}} End of baseX_to_b
+    
+    # }}} End of Convertions To Binary Strings
+    
+    # Convertions From Binary Strings {{{
+    
+    # b_to_int {{{
+    print('\nb_to_int()...')
+    print(b_to_int.__doc__)
+    try:
+        assert b_to_int('00000000') == 0,                                           'FAIL : b_to_int : 0'
+        assert b_to_int('0101') == 5,                                               'FAIL : b_to_int : 1'
+        assert b_to_int('0101', endian='little') == 10,                             'FAIL : b_to_int : 2'
+    except AssertionError as e:
+        print(e)
+    # }}} End of b_to_int
+    
+    # b_to_frac {{{
+    print('\nb_to_frac()...')
+    print(b_to_frac.__doc__)
+    try:
+        assert b_to_frac('00000000') == 0.0,                                        'FAIL : b_to_frac : 0'
+        assert b_to_frac('0101') == 0.3125,                                         'FAIL : b_to_frac : 0'
+    except AssertionError as e:
+        print(e)
+    # }}} End of b_to_frac
+    
+    # b_to_str {{{
+    print('\nb_to_str()...')
+    print(b_to_str.__doc__)
+    try:
+        assert b_to_str() == '',                                                    'FAIL : b_to_str : 0'
+        assert b_to_str('') == '',                                                  'FAIL : b_to_str : 1'
+        assert b_to_str('0') == '\x00',                                             'FAIL : b_to_str : 2'
+        assert b_to_str('1') == '\x80',                                             'FAIL : b_to_str : 3'
+        assert b_to_str('01010101') == 'U',                                         'FAIL : b_to_str : 4'
+        assert b_to_str('011000010110001001100011') == 'abc',                       'FAIL : b_to_str : 5'
+        assert b_to_str('0110000101100010011000111') == 'abc\x80',                  'FAIL : b_to_str : 6'
+    except AssertionError as e:
+        print(e)
+    # }}} End of b_to_str
+    
+    # b_to_bytes {{{
+    print('\nb_to_bytes()...')
+    print(b_to_bytes.__doc__)
+    try:
+        assert b_to_bytes() == b'',                                                    'FAIL : b_to_bytes : 0'
+        assert b_to_bytes('') == b'',                                                  'FAIL : b_to_bytes : 1'
+        assert b_to_bytes('0') == b'\x00',                                             'FAIL : b_to_bytes : 2'
+        assert b_to_bytes('1') == b'\x80',                                             'FAIL : b_to_bytes : 3'
+        assert b_to_bytes('01010101') == b'U',                                         'FAIL : b_to_bytes : 4'
+        assert b_to_bytes('011000010110001001100011') == b'abc',                       'FAIL : b_to_bytes : 5'
+        assert b_to_bytes('0110000101100010011000111') == b'abc\x80',                  'FAIL : b_to_bytes : 6'
+    except AssertionError as e:
+        print(e)
+    # }}} End of b_to_bytes
     
     # b_to_baseX {{{
     print('\nb_to_baseX()...')
@@ -1833,7 +1841,7 @@ def run_self_test(): # {{{
         print(e)
     # }}} End of b_to_baseX
     
-    # }}} End of Convertions To & From Binary Strings
+    # }}} End of Convertions From Binary Strings
     
     # Gray Conversion {{{
     
