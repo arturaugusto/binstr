@@ -568,7 +568,7 @@ def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity=
     '''
     Convert an ASCII string into a string of binary digits.
     
-    The bit-endianness of each character can be set the char_width and
+    The bit-endianness of each character can be set with the char_width and
       endian arguments although these are set to 8 bits wide and big
       endian by default.
     
@@ -608,6 +608,7 @@ def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity=
                                                                                                         'o': ord(c),
                                                                                                         'i': str(i),
                                                                                                        }
+    
     assert type(char_width) is int, \
         'Invalid type : char_width : Expected %(expect)s : %(actual)s' % {
                                                                           'expect': str(type(int())),
@@ -721,9 +722,178 @@ def b_to_str(A='', align='left', b_pad='0'): # {{{
     
     t = ''
     for i in range(0, len(A), 8): t += chr(int(A[i:i+8], 2))
-
+       
     return t
-    # }}} End of str_to_b()
+    # }}} End of b_to_str()
+
+def bytes_to_b(inbytes='', char_width=8, endian='big', prefix='', suffix='', parity='N'): # {{{
+    '''
+    Convert an byte sequence into a string of binary digits.
+    When used in Python 2.x, where there is no support for bytes type this will
+      simply return str_to_b().
+    This should allow the same code to be compatible with Python 2 and 3 for reading files.
+    E.g. bytes_to_b(open(<filename>, 'r').read())
+    
+    The bit-endianness of each character can be set with the char_width and
+      endian arguments although these are set to 8 bits wide and big
+      endian by default.
+    
+    A prefix and suffix can also be specified to be added to each character.
+    This can be useful for simulating start and stop bits.
+    
+    The parity argument can be used to add a parity bit.
+    The allowed options are;
+         N = None. No parity bit will be inserted.
+        pO = prefixed Odd. Odd parity bit will be prefixed to sequence.
+        sO = suffixed Odd. Odd parity bit will be suffixed to character.
+        pE = prefixed Even. Even parity bit will be prefixed to character.
+        sE = suffixed Even. Even parity bit will be suffixed to character.
+    Mark and Space parity bits can be included with the prefix and suffix
+      arguments as they are always fixed to either 1 or 0.
+
+    E.g. bytes_to_b() returns ''
+         bytes_to_b(b'\\x00') returns '00000000'
+         bytes_to_b(b'abc') returns '011000010110001001100011'
+         bytes_to_b(b'U') returns '01010101'
+         bytes_to_b(b'U', endian='little') returns '10101010'
+         bytes_to_b(b'U', char_width=7) returns '1010101'
+         bytes_to_b(b'U', prefix='1111', suffix='0000') returns '1111010101010000'
+         bytes_to_b(b'\\x00', parity='pO') returns '100000000'
+         bytes_to_b(b'U', parity='sE') returns '010101010'
+    '''
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    
+    assert type(char_width) is int, \
+        'Invalid type : char_width : Expected %(expect)s : %(actual)s' % {
+                                                                          'expect': str(type(int())),
+                                                                          'actual': str(type(char_width)),
+                                                                         }
+    
+    assert char_width >= 0, \
+        'Invalid value : char_width : Expected %(expect)s : %(actual)s' % {
+                                                                           'expect': 'char_width >= 0',
+                                                                           'actual': str(char_width),
+                                                                          }
+    
+    assert type(parity) is str, \
+        'Invalid type : parity : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(parity)),
+                                                                     }
+    
+    assert parity == 'N'  or \
+           parity == 'pO' or \
+           parity == 'sO' or \
+           parity == 'pE' or \
+           parity == 'sE', \
+           'Invalid value: prefix : Expected %(expect)s : %(actual)s.' % {
+                                                                          'expect': '"N" OR "pO" OR "sO" OR "pE" OR "sE"',
+                                                                          'actual': str(prefix),
+                                                                         }
+    
+    assert b_validate(prefix, fail_empty=False) == True, \
+        'Invalid b_string : prefix : %(actual)s' % {'actual': str(prefix)}
+    
+    assert b_validate(suffix, fail_empty=False) == True, \
+        'Invalid b_string : suffix : %(actual)s' % {'actual': str(suffix)}
+    
+    if type(inbytes) is str:
+        return str_to_b(instr=inbytes, char_width=char_width, endian=endian, prefix=prefix, suffix=suffix, parity=parity)
+    else:
+        assert type(inbytes) is bytes, \
+            'Invalid type : inbytes : Expected %(expect)s : %(actual)s' % {
+                                                                           'expect': str(type(bytes())),
+                                                                           'actual': str(type(inbytes)),
+                                                                          }
+    t = ''
+    for i, b in enumerate(inbytes):
+        assert int(b) < 256, \
+            'Invalid value : byte "%(b)s" at position %(i)s is not a valid byte (< 256)' % {
+                                                                                            'b': str(b),
+                                                                                            'i': str(i),
+                                                                                           }
+        b_c = int_to_b(int(b), width=char_width, endian=endian, chop='most')
+        
+        t += prefix
+        
+        if   parity == 'pO': t += b_lnxor(b_c)
+        elif parity == 'pE': t += b_lxor(b_c)
+        
+        t += b_c
+        
+        if   parity == 'sO': t += b_lnxor(b_c)
+        elif parity == 'sE': t += b_lxor(b_c)
+        
+        t += suffix
+    
+    return t
+    # }}} End of bytes_to_b()
+
+def b_to_bytes(A='', align='left', b_pad='0'): # {{{
+    '''
+    Convert a b_string to an byte sequence suitable for writing to a file in
+      binary mode.
+    
+    The input will be padded to a multiple of 8 bits long and can be controlled
+      with the arguments align and b_pad.
+
+    E.g. b_to_bytes() returns b''
+         b_to_bytes('') returns b''
+         b_to_bytes('0') returns b'\\x00'
+         b_to_bytes('1') returns b'\\x01'
+         b_to_bytes('01010101') returns b'U'
+         b_to_bytes('011000010110001001100011') returns b'abc'
+         b_to_bytes('0110000101100010011000111') returns b'abc\\x80'
+    '''
+    assert b_validate(A, fail_empty=False) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(align) is str, \
+        'Invalid type : align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(align)),
+                                                                    }
+    
+    assert align == 'right' or align == 'left', \
+        'Invalid value: align : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"left" OR "right"',
+                                                                     'actual': str(align),
+                                                                    }
+    
+    assert type(b_pad) is str, \
+        'Invalid type : b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(b_pad)),
+                                                                    }
+    
+    assert b_pad == '0' or b_pad == '1', \
+        'Invalid value: b_pad : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': '"0" OR "1"',
+                                                                     'actual': str(len(b_pad)),
+                                                                    }
+    
+    if type(bytes()) is str:
+        return b_to_str(A=A, align=align, b_pad=b_pad)
+    else:
+        # Pad out the input b_string to be a multiple of 8 (bits_per_byte) bits long.
+        if align == 'left': A = A + b_pad * ((8 - (len(A) % 8)) % 8)
+        else:               A = b_pad * ((8 - (len(A) % 8)) % 8) + A
+        
+        t = []
+        for i in range(0, len(A), 8): t.append(int(A[i:i+8], 2))
+        
+        return bytes(t)
+    # }}} End of b_to_bytes()
 
 def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
     '''
@@ -1489,6 +1659,38 @@ def run_self_test(): # {{{
     except AssertionError as e:
         print(e)
     # }}} End of b_to_str
+    
+    # bytes_to_b {{{
+    print('\nbytes_to_b()...')
+    print(bytes_to_b.__doc__)
+    try:
+        assert bytes_to_b() == '',                                                     'FAIL : bytes_to_b : 0'
+        assert bytes_to_b(b'\x00') == '00000000',                                      'FAIL : bytes_to_b : 1'
+        assert bytes_to_b(b'abc') == '011000010110001001100011',                       'FAIL : bytes_to_b : 2'
+        assert bytes_to_b(b'U') == '01010101',                                         'FAIL : bytes_to_b : 3'
+        assert bytes_to_b(b'U', endian='little') == '10101010',                        'FAIL : bytes_to_b : 4'
+        assert bytes_to_b(b'U', char_width=7) == '1010101',                            'FAIL : bytes_to_b : 5'
+        assert bytes_to_b(b'U', prefix='1111', suffix='0000') == '1111010101010000',   'FAIL : bytes_to_b : 6'
+        assert bytes_to_b(b'\x00', parity='pO') == '100000000',                        'FAIL : bytes_to_b : 7'
+        assert bytes_to_b(b'U', parity='sE') == '010101010',                           'FAIL : bytes_to_b : 8'
+    except AssertionError as e:
+        print(e)
+    # }}} End of bytes_to_b
+    
+    # b_to_bytes {{{
+    print('\nb_to_bytes()...')
+    print(b_to_bytes.__doc__)
+    try:
+        assert b_to_bytes() == b'',                                                    'FAIL : b_to_bytes : 0'
+        assert b_to_bytes('') == b'',                                                  'FAIL : b_to_bytes : 1'
+        assert b_to_bytes('0') == b'\x00',                                             'FAIL : b_to_bytes : 2'
+        assert b_to_bytes('1') == b'\x80',                                             'FAIL : b_to_bytes : 3'
+        assert b_to_bytes('01010101') == b'U',                                         'FAIL : b_to_bytes : 4'
+        assert b_to_bytes('011000010110001001100011') == b'abc',                       'FAIL : b_to_bytes : 5'
+        assert b_to_bytes('0110000101100010011000111') == b'abc\x80',                  'FAIL : b_to_bytes : 6'
+    except AssertionError as e:
+        print(e)
+    # }}} End of b_to_bytes
     
     # baseX_to_b {{{
     print('\nbaseX_to_b()...')
