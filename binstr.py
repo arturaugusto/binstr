@@ -416,7 +416,7 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     Clearly, chop is only relevant when the width is specified to be less
       then the width of num.
     
-    The endianess is little by default but can be set to big to return a
+    The endianess is big by default but can be set to little to return a
       bit reversal.
     
     The returned string is can be converted to an int in Python by setting
@@ -495,6 +495,40 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     return t
     # }}} End of int_to_b()
 
+def b_to_int(A=0, endian='big'): # {{{
+    '''
+    Convert binary string of digits to an integer.
+    
+    The endianess is big by default but can be set to little to return a
+      bit reversal.
+    
+    This is basically just a wrapper for the inbuilt Python function int()
+      which is defined for completeness.
+       
+    E.g. b_to_int('00000000') returns 0
+         b_to_int('0101') returns 5
+         b_to_int('0101', endian='little') returns 10
+    '''
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    t = ''
+    if endian == 'big': t = A
+    else:               t = A[::-1]
+    return int(t, 2)
+    # }}} End of b_to_int()
+
 def frac_to_b(num=0.0, width=8, endian='big'): # {{{
     '''
     Convert a positive float which is less than 1.0 to a binary string.
@@ -563,6 +597,40 @@ def frac_to_b(num=0.0, width=8, endian='big'): # {{{
     
     return t
     # }}} End of frac_to_b()
+
+def b_to_frac(A='', endian='big'): # {{{
+    '''
+    Convert a binary string to a positive float which is less than 1.0.
+    
+    The endianess is little by default but can be set to big to return a
+      bit reversal.
+    
+    E.g. b_to_frac('00000000') returns 0.0
+         b_to_frac('0101') returns 0.3125
+    '''
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    
+    if endian == 'little': A = A[::-1]
+    
+    t = 0.0
+    for i, b in enumerate(A):
+        if b == '1': t += 1.0 / 2**(i+1)
+    
+    return t
+    # }}} End of b_to_frac()
 
 def str_to_b(instr='', char_width=8, endian='big', prefix='', suffix='', parity='N'): # {{{
     '''
@@ -1617,6 +1685,17 @@ def run_self_test(): # {{{
         print(e)
     # }}} End of int_to_b
     
+    # b_to_int {{{
+    print('\nb_to_int()...')
+    print(b_to_int.__doc__)
+    try:
+        assert b_to_int('00000000') == 0,                                           'FAIL : b_to_int : 0'
+        assert b_to_int('0101') == 5,                                               'FAIL : b_to_int : 1'
+        assert b_to_int('0101', endian='little') == 10,                             'FAIL : b_to_int : 2'
+    except AssertionError as e:
+        print(e)
+    # }}} End of b_to_int
+    
     # frac_to_b {{{
     print('\nfrac_to_b()...')
     print(frac_to_b.__doc__)
@@ -1627,6 +1706,16 @@ def run_self_test(): # {{{
     except AssertionError as e:
         print(e)
     # }}} End of frac_to_b
+    
+    # b_to_frac {{{
+    print('\nb_to_frac()...')
+    print(b_to_frac.__doc__)
+    try:
+        assert b_to_frac('00000000') == 0.0,                                        'FAIL : b_to_frac : 0'
+        assert b_to_frac('0101') == 0.3125,                                         'FAIL : b_to_frac : 0'
+    except AssertionError as e:
+        print(e)
+    # }}} End of b_to_frac
     
     # str_to_b {{{
     print('\nstr_to_b()...')
