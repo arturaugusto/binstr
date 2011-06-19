@@ -9,20 +9,6 @@ PyPI may not always have the latest version.
 The latest version can always be found on the GitHub page (https://github.com/DavidMcEwan/binstr).
 
 Includes:
-    int_to_b()      - Convert a positive integer to a sting of binary
-                      e.g. int_to_b(5) -> '00000101'
-    frac_to_b()     - Convert a positive fraction to a string of binary
-                      e.g. frac_to_b(0.5) -> '10000000'
-    str_to_b()      - Convert an ASCII string of characters to a string of binary
-                      e.g. str_to_b('abc') -> '011000010110001001100011' 
-    
-    b_land()        - Perform a logical AND
-    b_lor()         - Perform a logical OR
-    b_lxor()        - Perform a logical XOR
-    b_lnand()       - Perform a logical NAND
-    b_lnor()        - Perform a logical NOR
-    b_lnxor()       - Perform a logical NXOR
-    
     b_and()         - Perform a bitwise AND
     b_or()          - Perform a bitwise OR
     b_xor()         - Perform a bitwise XOR
@@ -31,14 +17,35 @@ Includes:
     b_nxor()        - Perform a bitwise NXOR
     b_not()         - Perform a bitwise NOT (inversion)
     
+    b_land()        - Perform a logical AND
+    b_lor()         - Perform a logical OR
+    b_lxor()        - Perform a logical XOR
+    b_lnand()       - Perform a logical NAND
+    b_lnor()        - Perform a logical NOR
+    b_lnxor()       - Perform a logical NXOR
+    
+    int_to_b()      - Convert a positive integer to a sting of binary.
+                      e.g. int_to_b(5) -> '00000101'
+    frac_to_b()     - Convert a positive fraction to a string of binary.
+                      e.g. frac_to_b(0.5) -> '10000000'
+    str_to_b()      - Convert an ASCII string of characters to a string of binary.
+                      e.g. str_to_b('abc') -> '011000010110001001100011' 
+    bytes_to_b()    - Convert an byte sequence to a string of binary.
+                      In Python 2.x this is the same as str_to_b().
+    baseX_to_b()    - Convert from another base (4, 8, 16, 32 or 64) to binary coding.
+    
+    b_to_int()      - Convert from base2 binary coding to an integer.
+    b_to_frac()      - Convert from base2 binary coding to an float less than 1.0.
+    b_to_str()      - Convert from binary coding to a string of ASCII characters.
+    b_to_bytes()    - Convert from binary coding to a byte sequence.
+                      In Python 2.x this is the same as b_to_str().
+    b_to_baseX()    - Convert from binary coding to another base (4, 8, 16, 32 or 64).
+    
     b_bin_to_gray() - Convert binary code into gray code
     b_gray_to_bin() - Convert gray code into binary code
     
     b_add()         - Perform an ADD operation
     b_mul()         - Perform a MUL operation (multiply)
-    
-    b_to_baseX()    - Convert from binary coding to another base (4, 8, 16, 32 or 64)
-    baseX_to_b()    - Convert from another base (4, 8, 16, 32 or 64) to binary coding
     
     b_blockify()    - Separate a string of binary into blocks
     b_validate()    - Validate that a given string contains only 0s and 1s
@@ -86,13 +93,28 @@ just in case anybody is interested.
 
 Rejected funtions include:
     deblockify - Use str().replace()
-    b_to_file - Use file().write(b_to_str(<b_string>), 'wb')
-    file_to_b - Use str_to_b(open(<path>, 'rb').read())
+    b_to_file - Use file().write(b_to_bytes(<b_string>), 'wb')
+    file_to_b - Use bytes_to_b(open(<path>, 'rb').read())
     b_log, b_exp, etc... - Use the proper math functions
     b_sub - Use b_add() with b_not for Two's compliment representaion.
     b_div - Use b_mul with inverse
     b_rotl, b_rotr - Use Python slices
     b_reverse - Use <string>[::-1] E.g. '0101'[::-1] returns '1010'
+
+Stuff on my TODO list include:
+    1. Use unittest.
+       This will allow the test to be a lot more complete and actually done in a
+       standard way instead of my own homegrown DIY run_self_test() function.
+       It will include testing the assertions are correct.
+    
+    2. Make some of the functions a bit more efficient by using map(), reduce() and filter().
+       I'm using list comprehension for the bitwise functions so that could be improved.
+    
+    3. Add functions for other binary encodings apart from standard base2 and Gray.
+       These would (maybe) include signed/unsigned exponential, signed/unsigned interleaved
+       exponential, Fibonacci, Rice, Golomb, Levenshtein, and Huffman coding.
+       I'm not quite sure what else should be added like that just now.
+
 
 If anybody has any tips, advice or general abuse concerning Binstr then please feel
 free to send me an email or even get on GitHub and contribute.
