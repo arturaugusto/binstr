@@ -181,6 +181,89 @@ class b_not(unittest.TestCase): # {{{
 # }}} End of Bitwise Operations
 
 # Logial Operations {{{
+
+class b_land(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_land(), '0')
+    
+    def test_AllZeros(self):        self.assertEqual(b.b_land('00000000'), '0')
+    def test_AllOnes(self):         self.assertEqual(b.b_land('11111111'), '1')
+    def test_Random(self):          self.assertEqual(b.b_land('10101101'), '0')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_land, A=0)
+        self.assertRaises(AssertionError, b.b_land, A='01012000')
+# }}} End of b_land
+
+class b_lnand(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_lnand(), '1')
+    
+    def test_AllZeros(self):        self.assertEqual(b.b_lnand('00000000'), '1')
+    def test_AllOnes(self):         self.assertEqual(b.b_lnand('11111111'), '0')
+    def test_Random(self):          self.assertEqual(b.b_lnand('10101101'), '1')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_lnand, A=0)
+        self.assertRaises(AssertionError, b.b_lnand, A='01012000')
+# }}} End of b_lnand
+
+class b_lor(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_lor(), '0')
+    
+    def test_AllZeros(self):        self.assertEqual(b.b_lor('00000000'), '0')
+    def test_AllOnes(self):         self.assertEqual(b.b_lor('11111111'), '1')
+    def test_Random(self):          self.assertEqual(b.b_lor('10101101'), '1')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_lor, A=0)
+        self.assertRaises(AssertionError, b.b_lor, A='01012000')
+# }}} End of b_lor
+
+class b_lnor(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_lnor(), '1')
+    
+    def test_AllZeros(self):        self.assertEqual(b.b_lnor('00000000'), '1')
+    def test_AllOnes(self):         self.assertEqual(b.b_lnor('11111111'), '0')
+    def test_Random(self):          self.assertEqual(b.b_lnor('10101101'), '0')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_lnor, A=0)
+        self.assertRaises(AssertionError, b.b_lnor, A='01012000')
+# }}} End of b_lnor
+
+class b_lxor(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_lxor(), '0')
+    
+    def test_AllZeros(self):        self.assertEqual(b.b_lxor('00000000'), '0')
+    def test_AllOnes(self):         self.assertEqual(b.b_lxor('11111111'), '0')
+    def test_OneOne(self):          self.assertEqual(b.b_lxor('00001000'), '1')
+    def test_OddOnes(self):         self.assertEqual(b.b_lxor('10101101'), '1')
+    def test_EvenOnes(self):        self.assertEqual(b.b_lxor('10101001'), '0')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_lxor, A=0)
+        self.assertRaises(AssertionError, b.b_lxor, A='01012000')
+# }}} End of b_lxor
+
+class b_lnxor(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_lnxor(), '1')
+    
+    def test_AllZeros(self):        self.assertEqual(b.b_lnxor('00000000'), '1')
+    def test_AllOnes(self):         self.assertEqual(b.b_lnxor('11111111'), '1')
+    def test_OneOne(self):          self.assertEqual(b.b_lnxor('00001000'), '0')
+    def test_OddOnes(self):         self.assertEqual(b.b_lnxor('10101101'), '0')
+    def test_EvenOnes(self):        self.assertEqual(b.b_lnxor('10101001'), '1')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_lnxor, A=0)
+        self.assertRaises(AssertionError, b.b_lnxor, A='01012000')
+# }}} End of b_lnxor
+
 # }}} End of Logial Operations
 
 # Convertions To Binary Strings {{{
