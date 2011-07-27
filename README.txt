@@ -114,6 +114,9 @@ Stuff on my TODO list include:
        These would (maybe) include signed/unsigned exponential, signed/unsigned interleaved
        exponential, Fibonacci, Rice, Golomb, Levenshtein, and Huffman coding.
        I'm not quite sure what else should be added like that just now.
+    
+    4. Add Two's Compliment function. I know it's so trivial I could just put it in now
+       but I want to get unittest done first.
 
 
 If anybody has any tips, advice or general abuse concerning Binstr then please feel
