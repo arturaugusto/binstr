@@ -321,6 +321,49 @@ class frac_to_b(unittest.TestCase): # {{{
         self.assertRaises(AssertionError, b.frac_to_b, num=5, endian='other')
 # }}} End of frac_to_b
 
+class str_to_b(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.str_to_b(), '')
+    def test_HexChar(self):         self.assertEqual(b.str_to_b('\x00'), '00000000')
+    def test_AsciiChar(self):       self.assertEqual(b.str_to_b('U'), '01010101')
+    def test_CharWidthLarge(self):  self.assertEqual(b.str_to_b('U', char_width=9), '001010101')
+    def test_CharWidthSmall(self):  self.assertEqual(b.str_to_b('U', char_width=7), '1010101')
+    def test_EndianBig(self):       self.assertEqual(b.str_to_b('U', endian='big'), '01010101')
+    def test_EndianLittle(self):    self.assertEqual(b.str_to_b('U', endian='little'), '10101010')
+    def test_Prefix(self):          self.assertEqual(b.str_to_b('U', prefix='1111'), '111101010101')
+    def test_Suffix(self):          self.assertEqual(b.str_to_b('U', suffix='1111'), '010101011111')
+    def test_LittlePrefix(self):    self.assertEqual(b.str_to_b('U', endian='little', prefix='1111'), '111110101010')
+    def test_LittleSuffix(self):    self.assertEqual(b.str_to_b('U', endian='little', suffix='1111'), '101010101111')
+    def test_ParityN(self):         self.assertEqual(b.str_to_b('U', parity='N'), '01010101')
+    def test_ParityPO(self):        self.assertEqual(b.str_to_b('U', parity='pO'), '101010101')
+    def test_ParitySO(self):        self.assertEqual(b.str_to_b('U', parity='sO'), '010101011')
+    def test_ParityPE(self):        self.assertEqual(b.str_to_b('U', parity='pE'), '001010101')
+    def test_ParitySE(self):        self.assertEqual(b.str_to_b('U', parity='sE'), '010101010')
+    
+    def test_BadInstr(self):
+        self.assertRaises(AssertionError, b.str_to_b, instr=5)
+    
+    def test_BadCharWidth(self):
+        self.assertRaises(AssertionError, b.str_to_b, instr='\x55', char_width=-5)
+        self.assertRaises(AssertionError, b.str_to_b, instr='\x55', char_width='5')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.str_to_b, instr='\x55', endian=5)
+        self.assertRaises(AssertionError, b.str_to_b, instr='\x55', endian='other')
+    
+    def test_BadPrefix(self):
+        self.assertRaises(AssertionError, b.str_to_b, instr='\x55', prefix=5)
+        self.assertRaises(AssertionError, b.str_to_b, instr='\x55', prefix='5')
+    
+    def test_BadSuffix(self):
+        self.assertRaises(AssertionError, b.str_to_b, instr='\x55', suffix=5)
+        self.assertRaises(AssertionError, b.str_to_b, instr='\x55', suffix='5')
+    
+    def test_BadParity(self):
+        self.assertRaises(AssertionError, b.str_to_b, instr='\x55', parity=5)
+        self.assertRaises(AssertionError, b.str_to_b, instr='\x55', parity='5')
+# }}} End of str_to_b
+
 # }}} Convertions To Binary Strings
 
 # Convertions From Binary Strings {{{
