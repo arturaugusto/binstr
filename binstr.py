@@ -898,7 +898,7 @@ def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
 
 # Convertions From Binary Strings {{{
 
-def b_to_int(A=0, endian='big'): # {{{
+def b_to_int(A='0', endian='big'): # {{{
     '''
     Convert binary string of digits to an integer.
     
@@ -932,7 +932,7 @@ def b_to_int(A=0, endian='big'): # {{{
     return int(t, 2)
     # }}} End of b_to_int()
 
-def b_to_frac(A='', endian='big'): # {{{
+def b_to_frac(A='0', endian='big'): # {{{
     '''
     Convert a binary string to a positive float which is less than 1.0.
     

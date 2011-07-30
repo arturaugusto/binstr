@@ -494,6 +494,39 @@ class baseX_to_b(unittest.TestCase): # {{{
 # }}} Convertions To Binary Strings
 
 # Convertions From Binary Strings {{{
+
+class b_to_int(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_to_int(), 0)
+    def test_A(self):         self.assertEqual(b.b_to_int('0101'), 5)
+    def test_EndianBig(self):       self.assertEqual(b.b_to_int('0101', endian='big'), 5)
+    def test_EndianLittle(self):    self.assertEqual(b.b_to_int('0101', endian='little'), 10)
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_to_int, A=0)
+        self.assertRaises(AssertionError, b.b_to_int, A='01012000')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.b_to_int, A='0', endian=5)
+        self.assertRaises(AssertionError, b.b_to_int, A='0', endian='other')
+# }}} End of b_to_int
+
+class b_to_frac(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_to_frac(), 0.0)
+    def test_A(self):         self.assertEqual(b.b_to_frac('0101'), 0.3125)
+    def test_EndianBig(self):       self.assertEqual(b.b_to_frac('0101', endian='big'), 0.3125)
+    def test_EndianLittle(self):    self.assertEqual(b.b_to_frac('0101', endian='little'), 0.625)
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_to_frac, A=0)
+        self.assertRaises(AssertionError, b.b_to_frac, A='01012000')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.b_to_frac, A='0', endian=5)
+        self.assertRaises(AssertionError, b.b_to_frac, A='0', endian='other')
+# }}} End of b_to_frac
+
 # }}} End of Convertions From Binary Strings
 
 # Gray Conversion {{{
