@@ -267,6 +267,60 @@ class b_lnxor(unittest.TestCase): # {{{
 # }}} End of Logial Operations
 
 # Convertions To Binary Strings {{{
+
+class int_to_b(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.int_to_b(), '00000000')
+    def test_OnlyNum(self):         self.assertEqual(b.int_to_b(5), '00000101')
+    def test_WidthLarge(self):      self.assertEqual(b.int_to_b(0xF5, width=10), '0011110101')
+    def test_WidthSmall(self):      self.assertEqual(b.int_to_b(0xF5, width=2), '01')
+    def test_EndianBig(self):       self.assertEqual(b.int_to_b(0xF5, endian='big'), '11110101')
+    def test_EndianLittle(self):    self.assertEqual(b.int_to_b(0xF5, endian='little'), '10101111')
+    def test_ChopMost(self):        self.assertEqual(b.int_to_b(0xF5, width=7, chop='most'), '1110101')
+    def test_ChopLeast(self):       self.assertEqual(b.int_to_b(0xF5, width=7, chop='least'), '1111010')
+    
+    def test_BadNum(self):
+        self.assertRaises(AssertionError, b.int_to_b, num=-5)
+        self.assertRaises(AssertionError, b.int_to_b, num='5')
+    
+    def test_BadWidth(self):
+        self.assertRaises(AssertionError, b.int_to_b, num=5, width=-5)
+        self.assertRaises(AssertionError, b.int_to_b, num=5, width='5')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.int_to_b, num=5, endian=5)
+        self.assertRaises(AssertionError, b.int_to_b, num=5, endian='other')
+    
+    def test_BadChop(self):
+        self.assertRaises(AssertionError, b.int_to_b, num=5, chop=5)
+        self.assertRaises(AssertionError, b.int_to_b, num=5, chop='other')
+# }}} End of int_to_b
+
+class frac_to_b(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.frac_to_b(), '00000000')
+    def test_OnlyNum(self):         self.assertEqual(b.frac_to_b(0.5), '10000000')
+    def test_Width(self):           self.assertEqual(b.frac_to_b(0.5, width=5), '10000')
+    def test_EndianBig(self):       self.assertEqual(b.frac_to_b(0.5, endian='big'), '10000000')
+    def test_EndianLittle(self):    self.assertEqual(b.frac_to_b(0.5, endian='little'), '00000001')
+    
+    def test_Rounding(self):
+        self.assertEqual(b.frac_to_b(0.3, width=8), '01001101')
+        self.assertEqual(b.frac_to_b(0.3, width=5), '01010')
+    
+    def test_BadNum(self):
+        self.assertRaises(AssertionError, b.frac_to_b, num=5)
+        self.assertRaises(AssertionError, b.frac_to_b, num='5')
+    
+    def test_BadWidth(self):
+        self.assertRaises(AssertionError, b.frac_to_b, num=5, width=-5)
+        self.assertRaises(AssertionError, b.frac_to_b, num=5, width='5')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.frac_to_b, num=5, endian=5)
+        self.assertRaises(AssertionError, b.frac_to_b, num=5, endian='other')
+# }}} End of frac_to_b
+
 # }}} Convertions To Binary Strings
 
 # Convertions From Binary Strings {{{
