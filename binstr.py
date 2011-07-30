@@ -802,7 +802,7 @@ def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
     If a character is used in the input string it must be specified using the
       pad argument.
     
-    E.g. baseX_to_b() returns '00000000'
+    E.g. baseX_to_b() returns '000000'
          baseX_to_b('') returns 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
          baseX_to_b('', base=4) returns '0123'
          baseX_to_b('', base=8) returns '01234567'
@@ -866,6 +866,11 @@ def baseX_to_b(instr='A', base=64, alphabet='', pad='='): # {{{
                                                                         'actual': str(len(alphabet)),
                                                                        }
     
+    assert type(instr) is str, \
+        'Invalid type : instr : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(str())),
+                                                                     'actual': str(type(instr)),
+                                                                    }
     # Return the active alphabet on empty input string.
     if not len(instr): return alphabet
     
