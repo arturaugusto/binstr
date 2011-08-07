@@ -812,6 +812,48 @@ class b_mul(unittest.TestCase): # {{{
 # }}} End of Arithmetic Operations
 
 # Miscellaneous Functions {{{
+
+class b_blockify(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_blockify(), '')
+    def test_Defaults(self):        self.assertEqual(b.b_blockify('00000000'), '0000 0000')
+    def test_Size(self):            self.assertEqual(b.b_blockify('00000000', size=3), '000 000 00')
+    def test_Sep(self):             self.assertEqual(b.b_blockify('00000000', sep='_'), '0000_0000')
+    def test_PadLeft(self):         self.assertEqual(b.b_blockify('000000000', align='left', pad='x'), '0000 0000 0xxx')
+    def test_PadRight(self):        self.assertEqual(b.b_blockify('000000000', align='right', pad='x'), 'xxx0 0000 0000')
+    def test_AlignLeft(self):       self.assertEqual(b.b_blockify('000000000', align='left'), '0000 0000 0')
+    def test_AlignRight(self):      self.assertEqual(b.b_blockify('000000000', align='right'), '0 0000 0000')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_blockify, A=0)
+        self.assertRaises(AssertionError, b.b_blockify, A='01012000')
+    
+    def test_BadSize(self):
+        self.assertRaises(AssertionError, b.b_blockify, size=0)
+        self.assertRaises(AssertionError, b.b_blockify, size='5')
+    
+    def test_BadSep(self):
+        self.assertRaises(AssertionError, b.b_blockify, sep=0)
+    
+    def test_BadPad(self):
+        self.assertRaises(AssertionError, b.b_blockify, pad=0)
+    
+    def test_BadAlign(self):
+        self.assertRaises(AssertionError, b.b_blockify, align=2)
+        self.assertRaises(AssertionError, b.b_blockify, align='bad')
+# }}} End of b_blockify
+
+class b_validate(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_validate(), False)
+    def test_EmptyDefault(self):    self.assertEqual(b.b_validate(''), False)
+    def test_EmptyFail(self):       self.assertEqual(b.b_validate('', fail_empty=True), False)
+    def test_EmptyPass(self):       self.assertEqual(b.b_validate('', fail_empty=False), True)
+    def test_Good(self):            self.assertEqual(b.b_validate('01010101'), True)
+    def test_Bad(self):             self.assertEqual(b.b_validate('010120101'), False)
+    def test_Blockified(self):      self.assertEqual(b.b_validate('0101 0101'), False)
+# }}} End of b_validate
+
 # }}} End of Miscellaneous Functions
 
 if __name__ == '__main__':
