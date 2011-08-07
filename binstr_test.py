@@ -498,7 +498,7 @@ class baseX_to_b(unittest.TestCase): # {{{
 class b_to_int(unittest.TestCase): # {{{
     
     def test_NoArgs(self):          self.assertEqual(b.b_to_int(), 0)
-    def test_A(self):         self.assertEqual(b.b_to_int('0101'), 5)
+    def test_A(self):               self.assertEqual(b.b_to_int('0101'), 5)
     def test_EndianBig(self):       self.assertEqual(b.b_to_int('0101', endian='big'), 5)
     def test_EndianLittle(self):    self.assertEqual(b.b_to_int('0101', endian='little'), 10)
     
@@ -514,7 +514,7 @@ class b_to_int(unittest.TestCase): # {{{
 class b_to_frac(unittest.TestCase): # {{{
     
     def test_NoArgs(self):          self.assertEqual(b.b_to_frac(), 0.0)
-    def test_A(self):         self.assertEqual(b.b_to_frac('0101'), 0.3125)
+    def test_A(self):               self.assertEqual(b.b_to_frac('0101'), 0.3125)
     def test_EndianBig(self):       self.assertEqual(b.b_to_frac('0101', endian='big'), 0.3125)
     def test_EndianLittle(self):    self.assertEqual(b.b_to_frac('0101', endian='little'), 0.625)
     
@@ -526,6 +526,191 @@ class b_to_frac(unittest.TestCase): # {{{
         self.assertRaises(AssertionError, b.b_to_frac, A='0', endian=5)
         self.assertRaises(AssertionError, b.b_to_frac, A='0', endian='other')
 # }}} End of b_to_frac
+
+class b_to_str(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_to_str(), '')
+    def test_EmptyA(self):          self.assertEqual(b.b_to_str(''), '')
+    def test_SimpleA0(self):        self.assertEqual(b.b_to_str('0'), '\x00')
+    def test_SimpleA1(self):        self.assertEqual(b.b_to_str('1'), '\x80')
+    def test_CharA(self):           self.assertEqual(b.b_to_str('01010101'), 'U')
+    def test_Unaligned(self):       self.assertEqual(b.b_to_str('0110000101100010011000111'), 'abc\x80')
+    def test_BPad0(self):           self.assertEqual(b.b_to_str('0', b_pad='0'), '\x00')
+    def test_BPad1(self):           self.assertEqual(b.b_to_str('0', b_pad='1'), '\x7f')
+    def test_AlignLeft(self):       self.assertEqual(b.b_to_str('0', b_pad='1', align='left'), '\x7f')
+    def test_AlignRight(self):      self.assertEqual(b.b_to_str('0', b_pad='1', align='right'), '\xfe')
+
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_to_str, A=0)
+        self.assertRaises(AssertionError, b.b_to_str, A='01012000')
+    
+    def test_BadBPad(self):
+        self.assertRaises(AssertionError, b.b_to_str, A='0', b_pad=5)
+        self.assertRaises(AssertionError, b.b_to_str, A='0', b_pad='5')
+    
+    def test_BadAlign(self):
+        self.assertRaises(AssertionError, b.b_to_str, A='0', align=5)
+        self.assertRaises(AssertionError, b.b_to_str, A='0', align='other')
+# }}} End of b_to_str
+
+class b_to_bytes(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_to_bytes(), b'')
+    def test_EmptyA(self):          self.assertEqual(b.b_to_bytes(''), b'')
+    def test_SimpleA0(self):        self.assertEqual(b.b_to_bytes('0'), b'\x00')
+    def test_SimpleA1(self):        self.assertEqual(b.b_to_bytes('1'), b'\x80')
+    def test_CharA(self):           self.assertEqual(b.b_to_bytes('01010101'), b'U')
+    def test_Unaligned(self):       self.assertEqual(b.b_to_bytes('0110000101100010011000111'), b'abc\x80')
+    def test_BPad0(self):           self.assertEqual(b.b_to_bytes('0', b_pad='0'), b'\x00')
+    def test_BPad1(self):           self.assertEqual(b.b_to_bytes('0', b_pad='1'), b'\x7f')
+    def test_AlignLeft(self):       self.assertEqual(b.b_to_bytes('0', b_pad='1', align='left'), b'\x7f')
+    def test_AlignRight(self):      self.assertEqual(b.b_to_bytes('0', b_pad='1', align='right'), b'\xfe')
+
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_to_bytes, A=0)
+        self.assertRaises(AssertionError, b.b_to_bytes, A='01012000')
+    
+    def test_BadBPad(self):
+        self.assertRaises(AssertionError, b.b_to_bytes, A='0', b_pad=5)
+        self.assertRaises(AssertionError, b.b_to_bytes, A='0', b_pad='5')
+    
+    def test_BadAlign(self):
+        self.assertRaises(AssertionError, b.b_to_bytes, A='0', align=5)
+        self.assertRaises(AssertionError, b.b_to_bytes, A='0', align='other')
+# }}} End of b_to_bytes
+
+class b_to_baseX(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_to_baseX(), 'AA==')
+    def test_EmptyABase4(self):     self.assertEqual(b.b_to_baseX('', base=4), '0123')
+    def test_EmptyABase8(self):     self.assertEqual(b.b_to_baseX('', base=8), '01234567')
+    def test_EmptyABase16(self):    self.assertEqual(b.b_to_baseX('', base=16), '0123456789ABCDEF')
+    def test_EmptyABase32(self):    self.assertEqual(b.b_to_baseX('', base=32), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567')
+    def test_EmptyABase64(self):    self.assertEqual(b.b_to_baseX('', base=64),
+                                      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/')
+    def test_Base4(self):           self.assertEqual(b.b_to_baseX('00 01 10 11'.replace(' ', ''), base=4), '0123')
+    def test_Base8(self):           self.assertEqual(b.b_to_baseX('000 001 010 011 100 101 110 111'.replace(' ', ''), base=8),
+                                      '01234567')
+    
+    def test_Base16(self):          self.assertEqual(b.b_to_baseX(
+                                      '0000 0001 0010 0011 0100 0101 0110 0111'.replace(' ', '') +
+                                      '1000 1001 1010 1011 1100 1101 1110 1111'.replace(' ', ''), base=16),
+                                      '0123456789ABCDEF')
+    
+    def test_Base32(self):          self.assertEqual(b.b_to_baseX(
+                                      '00000 00001 00010 00011 00100 00101 00110 00111'.replace(' ', '') +
+                                      '01000 01001 01010 01011 01100 01101 01110 01111'.replace(' ', '') +
+                                      '10000 10001 10010 10011 10100 10101 10110 10111'.replace(' ', '') +
+                                      '11000 11001 11010 11011 11100 11101 11110 11111'.replace(' ', ''), base=32),
+                                      'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567')
+    
+    def test_Base64(self):          self.assertEqual(b.b_to_baseX(
+                                      '000000 000001 000010 000011 000100 000101 000110 000111'.replace(' ', '') +
+                                      '001000 001001 001010 001011 001100 001101 001110 001111'.replace(' ', '') +
+                                      '010000 010001 010010 010011 010100 010101 010110 010111'.replace(' ', '') +
+                                      '011000 011001 011010 011011 011100 011101 011110 011111'.replace(' ', '') +
+                                      '100000 100001 100010 100011 100100 100101 100110 100111'.replace(' ', '') +
+                                      '101000 101001 101010 101011 101100 101101 101110 101111'.replace(' ', '') +
+                                      '110000 110001 110010 110011 110100 110101 110110 110111'.replace(' ', '') +
+                                      '111000 111001 111010 111011 111100 111101 111110 111111'.replace(' ', ''), base=64),
+                                      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/')
+    
+    def test_AlphabetBase4(self):   self.assertEqual(b.b_to_baseX('00 01 10 11'.replace(' ', ''), base=4, alphabet='abcd'), 'abcd')
+    def test_AlphabetBase8(self):   self.assertEqual(b.b_to_baseX('000 001 010 011 100 101 110 111'.replace(' ', ''), base=8,
+                                      alphabet='abcdefgh'),
+                                      'abcdefgh')
+    
+    def test_AlphabetBase16(self):  self.assertEqual(b.b_to_baseX(
+                                      '0000 0001 0010 0011 0100 0101 0110 0111'.replace(' ', '') +
+                                      '1000 1001 1010 1011 1100 1101 1110 1111'.replace(' ', ''), base=16,
+                                      alphabet='abcdefghijklmnop'),
+                                      'abcdefghijklmnop')
+    
+    def test_AlphabetBase32(self):  self.assertEqual(b.b_to_baseX(
+                                      '00000 00001 00010 00011 00100 00101 00110 00111'.replace(' ', '') +
+                                      '01000 01001 01010 01011 01100 01101 01110 01111'.replace(' ', '') +
+                                      '10000 10001 10010 10011 10100 10101 10110 10111'.replace(' ', '') +
+                                      '11000 11001 11010 11011 11100 11101 11110 11111'.replace(' ', ''), base=32,
+                                      alphabet='abcdefghijklmnopqrstuvwxyz012345'),
+                                      'abcdefghijklmnopqrstuvwxyz012345')
+    
+    def test_AlphabetBase64(self):  self.assertEqual(b.b_to_baseX(
+                                      '000000 000001 000010 000011 000100 000101 000110 000111'.replace(' ', '') +
+                                      '001000 001001 001010 001011 001100 001101 001110 001111'.replace(' ', '') +
+                                      '010000 010001 010010 010011 010100 010101 010110 010111'.replace(' ', '') +
+                                      '011000 011001 011010 011011 011100 011101 011110 011111'.replace(' ', '') +
+                                      '100000 100001 100010 100011 100100 100101 100110 100111'.replace(' ', '') +
+                                      '101000 101001 101010 101011 101100 101101 101110 101111'.replace(' ', '') +
+                                      '110000 110001 110010 110011 110100 110101 110110 110111'.replace(' ', '') +
+                                      '111000 111001 111010 111011 111100 111101 111110 111111'.replace(' ', ''), base=64,
+                                      alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-'),
+                                      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-')
+    
+    # There are always 0 or 1 or 2 padding characters when in base8.
+    def test_PadBase8(self):
+        self.assertEqual(b.b_to_baseX('0', base=8), '000==')
+        self.assertEqual(b.b_to_baseX('00', base=8), '000==')
+        self.assertEqual(b.b_to_baseX('000', base=8), '000==')
+        self.assertEqual(b.b_to_baseX('0000', base=8), '000==')
+        self.assertEqual(b.b_to_baseX('00001', base=8), '020==')
+        self.assertEqual(b.b_to_baseX('000010', base=8), '020==')
+        self.assertEqual(b.b_to_baseX('0000101', base=8), '024==')
+        self.assertEqual(b.b_to_baseX('00001010', base=8), '024==')
+        self.assertEqual(b.b_to_baseX('000010101', base=8), '025000=')
+    
+    # Although these tests look a bit strange they are indeed correct. Just think about it.
+    # There are always 0 or 3 or 4 padding characters when in base32.
+    def test_PadBase32(self):
+        self.assertEqual(b.b_to_baseX('000010', base=32), 'BA====')
+        self.assertEqual(b.b_to_baseX('0000100', base=32), 'BA====')
+        self.assertEqual(b.b_to_baseX('00001000', base=32), 'BA====')
+        self.assertEqual(b.b_to_baseX('000010000', base=32), 'BAAA===')
+        self.assertEqual(b.b_to_baseX('0000100000', base=32), 'BAAA===')
+    
+    # These tests are taken from Wikipedia.
+    # There are always 0 or 1 or 2 padding characters when in base64.
+    def test_PadBase64(self):
+        self.assertEqual(b.b_to_baseX(b.int_to_b(0x14FB9C03D97E, width=48)), 'FPucA9l+')
+        self.assertEqual(b.b_to_baseX(b.int_to_b(0x14FB9C03D9, width=40)), 'FPucA9k=')
+        self.assertEqual(b.b_to_baseX(b.int_to_b(0x14FB9C03, width=32)), 'FPucAw==')
+    
+    def test_Pad(self):
+        self.assertEqual(b.b_to_baseX(b.int_to_b(0x14FB9C03, width=32)), 'FPucAw==')
+        self.assertEqual(b.b_to_baseX(b.int_to_b(0x14FB9C03, width=32), pad=''), 'FPucAw')
+        self.assertEqual(b.b_to_baseX(b.int_to_b(0x14FB9C03, width=32), pad='$'), 'FPucAw$$')
+    
+    def test_AlignLeft(self):       self.assertEqual(b.b_to_baseX('111', base=8, align='left', pad=''), '700')
+    def test_AlignRight(self):      self.assertEqual(b.b_to_baseX('111', base=8, align='right', pad=''), '016')
+    
+    def test_BPad0(self):           self.assertEqual(b.b_to_baseX('111', base=8, b_pad='0', pad=''), '700')
+    def test_BPad1(self):           self.assertEqual(b.b_to_baseX('111', base=8, b_pad='1', pad=''), '776')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_to_baseX, A=0)
+        self.assertRaises(AssertionError, b.b_to_baseX, A='01012000')
+    
+    def test_BadBase(self):
+        self.assertRaises(AssertionError, b.b_to_baseX, A='0', base=5)
+        self.assertRaises(AssertionError, b.b_to_baseX, A='0', base='5')
+    
+    def test_BadAlphabet(self):
+        self.assertRaises(AssertionError, b.b_to_baseX, A='0', alphabet=5)
+        self.assertRaises(AssertionError, b.b_to_baseX, A='0', alphabet='5')
+    
+    def test_BadPad(self):
+        self.assertRaises(AssertionError, b.b_to_baseX, pad=0)
+        self.assertRaises(AssertionError, b.b_to_baseX, pad='01')
+    
+    def test_BadAlign(self):
+        self.assertRaises(AssertionError, b.b_to_baseX, A='0', align=5)
+        self.assertRaises(AssertionError, b.b_to_baseX, A='0', align='other')
+    
+    def test_BadBPad(self):
+        self.assertRaises(AssertionError, b.b_to_baseX, A='0', b_pad=5)
+        self.assertRaises(AssertionError, b.b_to_baseX, A='0', b_pad='5')
+# }}} End of b_to_baseX
 
 # }}} End of Convertions From Binary Strings
 
