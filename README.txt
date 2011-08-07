@@ -66,9 +66,9 @@ shuffle = [int( int_to_b(i, width=int(log(length, 2)), endian='little') , 2)
 str_to_b() is also very flexible and can be used to simulate the voltage levels
 in serial communication.
 E.g. To simulate a standard RS232 port with a "8E1" configuration sending the
-data "hello world" this can be done simply.
+data "Hello World!" this can be done simply.
 
-data = str_to_b('hello_world', endian='little', char_width=8, parity='sE', suffix='1')
+data = str_to_b('Hello World!', endian='little', char_width=8, parity='sE', suffix='1')
 
 Note that data is usually sent out LSB first. The char_width argument is shown
 for clarity but is 8 by default. The suffix argument is used to add one stop bit.
