@@ -91,6 +91,10 @@ Dev Notes
 This is just a list of things which have been considered while developing binstr,
 just in case anybody is interested.
 
+Binstr may work on versions of Python before 2.6 with some slight and fairly obvious
+modifications (obvious when you run it) it. This is not really a big priority
+of mine but I'll try not to break backward compatiblity when possible. No promises.
+
 Rejected funtions include:
     deblockify - Use str().replace()
     b_to_file - Use file().write(b_to_bytes(<b_string>), 'wb')
@@ -101,23 +105,19 @@ Rejected funtions include:
     b_rotl, b_rotr - Use Python slices
     b_reverse - Use <string>[::-1] E.g. '0101'[::-1] returns '1010'
 
-Stuff on my TODO list include:
-    1. Use unittest.
-       This will allow the test to be a lot more complete and actually done in a
-       standard way instead of my own homegrown DIY run_self_test() function.
-       It will include testing the assertions are correct.
+Stuff on my TODO list for next version include:
+    1. Make some of the functions a bit more efficient by using map(), reduce() and filter().
+       None of the functions have been written with speed as a top priority so some are pretty
+       poor in terms of efficiency.
     
-    2. Make some of the functions a bit more efficient by using map(), reduce() and filter().
-       I'm using list comprehension for the bitwise functions so that could be improved.
-    
-    3. Add functions for other binary encodings apart from standard base2 and Gray.
+    2. Add functions for other binary encodings apart from standard base2 and Gray.
        These would (maybe) include signed/unsigned exponential, signed/unsigned interleaved
        exponential, Fibonacci, Rice, Golomb, Levenshtein, and Huffman coding.
        I'm not quite sure what else should be added like that just now.
     
-    4. Add Two's Compliment function. I know it's so trivial I could just put it in now
-       but I want to get unittest done first.
-
+    3. Add Two's Compliment function and One's(?).
+       I know it's so trivial I could just put it in now but
+       it seems nicer to leave it till version 1.4.
 
 If anybody has any tips, advice or general abuse concerning Binstr then please feel
 free to send me an email or even get on GitHub and contribute.
