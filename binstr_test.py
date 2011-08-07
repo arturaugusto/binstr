@@ -40,9 +40,11 @@ class b_and(unittest.TestCase): # {{{
     def test_BadA(self):
         self.assertRaises(AssertionError, b.b_and, A=0, B='0011')
         self.assertRaises(AssertionError, b.b_and, A='01012000', B='0011')
+    
     def test_BadB(self):
         self.assertRaises(AssertionError, b.b_and, A='01010000', B=0)
         self.assertRaises(AssertionError, b.b_and, A='01010000', B='0021')
+    
     def test_BadAlign(self):
         self.assertRaises(AssertionError, b.b_and, A='01010000', B='0001', align=2)
         self.assertRaises(AssertionError, b.b_and, A='01010000', B='0001', align='bad')
@@ -64,9 +66,11 @@ class b_nand(unittest.TestCase): # {{{
     def test_BadA(self):
         self.assertRaises(AssertionError, b.b_nand, A=0, B='0011')
         self.assertRaises(AssertionError, b.b_nand, A='01012000', B='0011')
+    
     def test_BadB(self):
         self.assertRaises(AssertionError, b.b_nand, A='01010000', B=0)
         self.assertRaises(AssertionError, b.b_nand, A='01010000', B='0021')
+    
     def test_BadAlign(self):
         self.assertRaises(AssertionError, b.b_nand, A='01010000', B='0001', align=2)
         self.assertRaises(AssertionError, b.b_nand, A='01010000', B='0001', align='bad')
@@ -88,9 +92,11 @@ class b_or(unittest.TestCase): # {{{
     def test_BadA(self):
         self.assertRaises(AssertionError, b.b_or, A=0, B='0011')
         self.assertRaises(AssertionError, b.b_or, A='01012000', B='0011')
+    
     def test_BadB(self):
         self.assertRaises(AssertionError, b.b_or, A='01010000', B=0)
         self.assertRaises(AssertionError, b.b_or, A='01010000', B='0021')
+    
     def test_BadAlign(self):
         self.assertRaises(AssertionError, b.b_or, A='01010000', B='0001', align=2)
         self.assertRaises(AssertionError, b.b_or, A='01010000', B='0001', align='bad')
@@ -112,9 +118,11 @@ class b_nor(unittest.TestCase): # {{{
     def test_BadA(self):
         self.assertRaises(AssertionError, b.b_nor, A=0, B='0011')
         self.assertRaises(AssertionError, b.b_nor, A='01012000', B='0011')
+    
     def test_BadB(self):
         self.assertRaises(AssertionError, b.b_nor, A='01010000', B=0)
         self.assertRaises(AssertionError, b.b_nor, A='01010000', B='0021')
+    
     def test_BadAlign(self):
         self.assertRaises(AssertionError, b.b_nor, A='01010000', B='0001', align=2)
         self.assertRaises(AssertionError, b.b_nor, A='01010000', B='0001', align='bad')
@@ -132,13 +140,14 @@ class b_xor(unittest.TestCase): # {{{
     def test_NoArgs(self):          self.assertEqual(b.b_xor(), '00000000')
     def test_EmptyA(self):          self.assertEqual(b.b_xor(B='0101'), '00000101')
     def test_EmptyB(self):          self.assertEqual(b.b_xor(A='0101'), '00000101')
-    
     def test_BadA(self):
         self.assertRaises(AssertionError, b.b_xor, A=0, B='0011')
         self.assertRaises(AssertionError, b.b_xor, A='01012000', B='0011')
+    
     def test_BadB(self):
         self.assertRaises(AssertionError, b.b_xor, A='01010000', B=0)
         self.assertRaises(AssertionError, b.b_xor, A='01010000', B='0021')
+    
     def test_BadAlign(self):
         self.assertRaises(AssertionError, b.b_xor, A='01010000', B='0001', align=2)
         self.assertRaises(AssertionError, b.b_xor, A='01010000', B='0001', align='bad')
@@ -160,9 +169,11 @@ class b_nxor(unittest.TestCase): # {{{
     def test_BadA(self):
         self.assertRaises(AssertionError, b.b_nxor, A=0, B='0011')
         self.assertRaises(AssertionError, b.b_nxor, A='01012000', B='0011')
+    
     def test_BadB(self):
         self.assertRaises(AssertionError, b.b_nxor, A='01010000', B=0)
         self.assertRaises(AssertionError, b.b_nxor, A='01010000', B='0021')
+    
     def test_BadAlign(self):
         self.assertRaises(AssertionError, b.b_nxor, A='01010000', B='0001', align=2)
         self.assertRaises(AssertionError, b.b_nxor, A='01010000', B='0001', align='bad')
@@ -715,6 +726,45 @@ class b_to_baseX(unittest.TestCase): # {{{
 # }}} End of Convertions From Binary Strings
 
 # Gray Conversion {{{
+
+class b_bin_to_gray(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_bin_to_gray(), '00000000')
+    
+    def test_BottomEnd(self):       self.assertEqual(b.b_bin_to_gray('0000'), '0000')
+    def test_TopEnd(self):          self.assertEqual(b.b_bin_to_gray('1111'), '1000')
+    
+    def test_EndianBig(self):       self.assertEqual(b.b_bin_to_gray('1101', endian='big'), '1011')
+    def test_EndianLittle(self):    self.assertEqual(b.b_bin_to_gray('1101', endian='little'), '0111')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_bin_to_gray, A=0)
+        self.assertRaises(AssertionError, b.b_bin_to_gray, A='01012000')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.b_bin_to_gray, A='0', endian=5)
+        self.assertRaises(AssertionError, b.b_bin_to_gray, A='0', endian='other')
+# }}} End of b_bin_to_gray
+
+class b_gray_to_bin(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_gray_to_bin(), '00000000')
+    
+    def test_BottomEnd(self):       self.assertEqual(b.b_gray_to_bin('0000'), '0000')
+    def test_TopEnd(self):          self.assertEqual(b.b_gray_to_bin('1111'), '1010')
+    
+    def test_EndianBig(self):       self.assertEqual(b.b_gray_to_bin('1101', endian='big'), '1001')
+    def test_EndianLittle(self):    self.assertEqual(b.b_gray_to_bin('1101', endian='little'), '1011')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_gray_to_bin, A=0)
+        self.assertRaises(AssertionError, b.b_gray_to_bin, A='01012000')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.b_gray_to_bin, A='0', endian=5)
+        self.assertRaises(AssertionError, b.b_gray_to_bin, A='0', endian='other')
+# }}} End of b_gray_to_bin
+
 # }}} End of Gray Conversion
 
 # Arithmetic Operations {{{
