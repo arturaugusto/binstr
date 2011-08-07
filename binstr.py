@@ -45,13 +45,15 @@
 #        where the input was not a valid b_string.
 #    - The rest of the name describes the operation of the function.
 #
-# To test that everything is working e.g. before a commit you can use the
-#   run_self_test() function which will print out the doc strings for each
-#   function and messages if any fail.
-# To test everything use something like:
+# To test that everything is working e.g. before a commit run the unit tests
+#   with some commands like:
 #   cd binstr
-#   python binstr.py | grep FAIL
-#   python3 binstr.py | grep FAIL
+#   python binstr_test.py
+#   python3 binstr_test.py
+#
+# When binstr.py is executed as __main__ it will simply print the docstrings of
+#   all the functions using documentation().
+# The docstring for documentation() will not be printed.
 
 # Bitwise Operations {{{
 
@@ -1523,420 +1525,80 @@ def b_validate(A='', fail_empty=True): # {{{
 
 # }}} End of Miscellaneous Functions
 
-def run_self_test(): # {{{
-    
+def documentation(): # {{{
+    '''
+    Return all the docstrings in a string suitable for printing to STDOUT.
+    '''
+    t = ''
+
     # Bitwise Operations {{{
     
-    # b_and {{{
-    print('\nb_and()...')
-    print(b_and.__doc__)
-    try:
-        assert b_and('0101', '0011') == '0001',                                     'FAIL : b_and : 0'
-        assert b_and('01010000', '0011') == '00000000',                             'FAIL : b_and : 1'
-        assert b_and('01010000', '0011', align='left') == '00010000',               'FAIL : b_and : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_and
-    
-    # b_nand {{{
-    print('\nb_nand()...')
-    print(b_nand.__doc__)
-    try:
-        assert b_nand('0101', '0011') == '1110',                                    'FAIL : b_nand : 0'
-        assert b_nand('01010000', '0011') == '11111111',                            'FAIL : b_nand : 1'
-        assert b_nand('01010000', '0011', align='left') == '11101111',              'FAIL : b_nand : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_nand
-    
-    # b_or {{{
-    print('\nb_or()...')
-    print(b_or.__doc__)
-    try:
-        assert b_or('0101', '0011') == '0111',                                      'FAIL : b_or : 0'
-        assert b_or('01010000', '0011') == '01010011',                              'FAIL : b_or : 1'
-        assert b_or('01010000', '0011', align='left') == '01110000',                'FAIL : b_or : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_or
-    
-    # b_nor {{{
-    print('\nb_nor()...')
-    print(b_nor.__doc__)
-    try:
-        assert b_nor('0101', '0011') == '1000',                                     'FAIL : b_nor : 0'
-        assert b_nor('01010000', '0011') == '10101100',                             'FAIL : b_nor : 1'
-        assert b_nor('01010000', '0011', align='left') == '10001111',               'FAIL : b_nor : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_nor
-    
-    # b_xor {{{
-    print('\nb_xor()...')
-    print(b_xor.__doc__)
-    try:
-        assert b_xor('0101', '0011') == '0110',                                     'FAIL : b_xor : 0'
-        assert b_xor('01010000', '0011') == '01010011',                             'FAIL : b_xor : 1'
-        assert b_xor('01010000', '0011', align='left') == '01100000',               'FAIL : b_xor : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_xor
-    
-    # b_nxor {{{
-    print('\nb_nxor()...')
-    print(b_nxor.__doc__)
-    try:
-        assert b_nxor('0101', '0011') == '1001',                                    'FAIL : b_nxor : 0'
-        assert b_nxor('01010000', '0011') == '10101100',                            'FAIL : b_nxor : 1'
-        assert b_nxor('01010000', '0011', align='left') == '10011111',              'FAIL : b_nxor : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_nxor
-    
-    # b_not {{{
-    print('\nb_not()...')
-    print(b_not.__doc__)
-    try:
-        assert b_not() == '11111111',                                               'FAIL : b_not : 0'
-        assert b_not('0101') == '1010',                                             'FAIL : b_not : 1'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_not
+    t += '\nb_and()...'     + b_and.__doc__
+    t += '\nb_nand()...'    + b_nand.__doc__
+    t += '\nb_or()...'      + b_or.__doc__
+    t += '\nb_nor()...'     + b_nor.__doc__
+    t += '\nb_xor()...'     + b_xor.__doc__
+    t += '\nb_nxor()...'    + b_nxor.__doc__
+    t += '\nb_not()...'     + b_not.__doc__
     
     # }}} End of Bitwise Operations
     
     # Logical Operations {{{
     
-    # b_land {{{
-    print('\nb_land()...')
-    print(b_land.__doc__)
-    try:
-        assert b_land('11111111') == '1',                                           'FAIL : b_land : 0'
-        assert b_land('01010000') == '0',                                           'FAIL : b_land : 1'
-        assert b_land('00000000') == '0',                                           'FAIL : b_land : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_land
-    
-    # b_lnand {{{
-    print('\nb_lnand()...')
-    print(b_lnand.__doc__)
-    try:
-        assert b_lnand('11111111') == '0',                                          'FAIL : b_lnand : 0'
-        assert b_lnand('01010000') == '1',                                          'FAIL : b_lnand : 1'
-        assert b_lnand('00000000') == '1',                                          'FAIL : b_lnand : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_lnand
-    
-    # b_lor {{{
-    print('\nb_lor()...')
-    print(b_lor.__doc__)
-    try:
-        assert b_lor('11111111') == '1',                                            'FAIL : b_lor : 0'
-        assert b_lor('01010000') == '1',                                            'FAIL : b_lor : 1'
-        assert b_lor('00000000') == '0',                                            'FAIL : b_lor : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_lor
-    
-    # b_lnor {{{
-    print('\nb_lnor()...')
-    print(b_lnor.__doc__)
-    try:
-        assert b_lnor('11111111') == '0',                                           'FAIL : b_lnor : 0'
-        assert b_lnor('01010000') == '0',                                           'FAIL : b_lnor : 1'
-        assert b_lnor('00000000') == '1',                                           'FAIL : b_lnor : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_lnor
-    
-    # b_lxor {{{
-    print('\nb_lxor()...')
-    print(b_lxor.__doc__)
-    try:
-        assert b_lxor('11111111') == '0',                                           'FAIL : b_lxor : 0'
-        assert b_lxor('01010000') == '0',                                           'FAIL : b_lxor : 1'
-        assert b_lxor('01110000') == '1',                                           'FAIL : b_lxor : 2'
-        assert b_lxor('00000001') == '1',                                           'FAIL : b_lxor : 3'
-        assert b_lxor('00000000') == '0',                                           'FAIL : b_lxor : 4'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_lxor
-    
-    # b_lnxor {{{
-    print('\nb_lnxor()...')
-    print(b_lnxor.__doc__)
-    try:
-        assert b_lnxor('11111111') == '1',                                          'FAIL : b_lnxor : 0'
-        assert b_lnxor('01010000') == '1',                                          'FAIL : b_lnxor : 1'
-        assert b_lnxor('01110000') == '0',                                          'FAIL : b_lnxor : 2'
-        assert b_lnxor('00000001') == '0',                                          'FAIL : b_lnxor : 3'
-        assert b_lnxor('00000000') == '1',                                          'FAIL : b_lnxor : 4'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_lnxor
+    t += '\nb_land()...'    + b_land.__doc__
+    t += '\nb_lnand()...'   + b_lnand.__doc__
+    t += '\nb_lor()...'     + b_lor.__doc__
+    t += '\nb_lnor()...'    + b_lnor.__doc__
+    t += '\nb_lxor()...'    + b_lxor.__doc__
+    t += '\nb_lnxor()...'   + b_lnxor.__doc__
     
     # }}} End of Logical Operations
     
     # Convertions To Binary Strings {{{
     
-    # int_to_b {{{
-    print('\nint_to_b()...')
-    print(int_to_b.__doc__)
-    try:
-        assert int_to_b() == '00000000',                                            'FAIL : int_to_b : 0'
-        assert int_to_b(5) == '00000101',                                           'FAIL : int_to_b : 1'
-        assert int_to_b(0xF5, width=10, endian='little') == '1010111100',           'FAIL : int_to_b : 2'
-        assert int_to_b(0xF5, width=7) == '1110101',                                'FAIL : int_to_b : 3'
-        assert int_to_b(0xF5, width=7, chop='least') == '1111010',                  'FAIL : int_to_b : 4'
-    except AssertionError as e:
-        print(e)
-    # }}} End of int_to_b
-    
-    # frac_to_b {{{
-    print('\nfrac_to_b()...')
-    print(frac_to_b.__doc__)
-    try:
-        assert frac_to_b() == '00000000',                                           'FAIL : frac_to_b : 0'
-        assert frac_to_b(0.3, 5) == '01010',                                        'FAIL : frac_to_b : 1'
-        assert frac_to_b(0.5, width=10, endian='little') == '0000000001',           'FAIL : frac_to_b : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of frac_to_b
-    
-    # str_to_b {{{
-    print('\nstr_to_b()...')
-    print(str_to_b.__doc__)
-    try:
-        assert str_to_b() == '',                                                    'FAIL : str_to_b : 0'
-        assert str_to_b('\x00') == '00000000',                                      'FAIL : str_to_b : 1'
-        assert str_to_b('abc') == '011000010110001001100011',                       'FAIL : str_to_b : 2'
-        assert str_to_b('U') == '01010101',                                         'FAIL : str_to_b : 3'
-        assert str_to_b('U', endian='little') == '10101010',                        'FAIL : str_to_b : 4'
-        assert str_to_b('U', char_width=7) == '1010101',                            'FAIL : str_to_b : 5'
-        assert str_to_b('U', prefix='1111', suffix='0000') == '1111010101010000',   'FAIL : str_to_b : 6'
-        assert str_to_b('\x00', parity='pO') == '100000000',                        'FAIL : str_to_b : 7'
-        assert str_to_b('U', parity='sE') == '010101010',                           'FAIL : str_to_b : 8'
-    except AssertionError as e:
-        print(e)
-    # }}} End of str_to_b
-    
-    # bytes_to_b {{{
-    print('\nbytes_to_b()...')
-    print(bytes_to_b.__doc__)
-    try:
-        assert bytes_to_b() == '',                                                     'FAIL : bytes_to_b : 0'
-        assert bytes_to_b(b'\x00') == '00000000',                                      'FAIL : bytes_to_b : 1'
-        assert bytes_to_b(b'abc') == '011000010110001001100011',                       'FAIL : bytes_to_b : 2'
-        assert bytes_to_b(b'U') == '01010101',                                         'FAIL : bytes_to_b : 3'
-        assert bytes_to_b(b'U', endian='little') == '10101010',                        'FAIL : bytes_to_b : 4'
-        assert bytes_to_b(b'U', char_width=7) == '1010101',                            'FAIL : bytes_to_b : 5'
-        assert bytes_to_b(b'U', prefix='1111', suffix='0000') == '1111010101010000',   'FAIL : bytes_to_b : 6'
-        assert bytes_to_b(b'\x00', parity='pO') == '100000000',                        'FAIL : bytes_to_b : 7'
-        assert bytes_to_b(b'U', parity='sE') == '010101010',                           'FAIL : bytes_to_b : 8'
-    except AssertionError as e:
-        print(e)
-    # }}} End of bytes_to_b
-    
-    # baseX_to_b {{{
-    print('\nbaseX_to_b()...')
-    print(baseX_to_b.__doc__)
-    try:
-        assert baseX_to_b() == '000000',                                            'FAIL : baseX_to_b : 0'
-        assert baseX_to_b('') == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
-                                                                                    'FAIL : baseX_to_b : 1'
-        assert baseX_to_b('', base=4) == '0123',                                    'FAIL : baseX_to_b : 2'
-        assert baseX_to_b('', base=8) == '01234567',                                'FAIL : baseX_to_b : 3'
-        assert baseX_to_b('', base=16) == '0123456789ABCDEF',                       'FAIL : baseX_to_b : 4'
-        assert baseX_to_b('', base=32) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',       'FAIL : baseX_to_b : 5'
-        assert baseX_to_b('', base=64) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
-                                                                                    'FAIL : baseX_to_b : 6'
-        assert baseX_to_b('0123', base=4) == '00011011',                            'FAIL : baseX_to_b : 7'
-        assert baseX_to_b('01234567', base=8) == '000001010011100101110111',        'FAIL : baseX_to_b : 8'
-        assert baseX_to_b('05AF', base=16) == '0000010110101111',                   'FAIL : baseX_to_b : 9'
-        assert baseX_to_b('AZ27', base=32) == '00000110011101011111',               'FAIL : baseX_to_b : a'
-        assert baseX_to_b('TWFu', base=64) == '010011010110000101101110',           'FAIL : baseX_to_b : b'
-    except AssertionError as e:
-        print(e)
-    # }}} End of baseX_to_b
+    t += '\nint_to_b()...'      + int_to_b.__doc__
+    t += '\nfrac_to_b()...'     + frac_to_b.__doc__
+    t += '\nstr_to_b()...'      + str_to_b.__doc__
+    t += '\nbytes_to_b()...'    + bytes_to_b.__doc__
+    t += '\nbaseX_to_b()...'    + baseX_to_b.__doc__
     
     # }}} End of Convertions To Binary Strings
     
     # Convertions From Binary Strings {{{
     
-    # b_to_int {{{
-    print('\nb_to_int()...')
-    print(b_to_int.__doc__)
-    try:
-        assert b_to_int('00000000') == 0,                                           'FAIL : b_to_int : 0'
-        assert b_to_int('0101') == 5,                                               'FAIL : b_to_int : 1'
-        assert b_to_int('0101', endian='little') == 10,                             'FAIL : b_to_int : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_to_int
-    
-    # b_to_frac {{{
-    print('\nb_to_frac()...')
-    print(b_to_frac.__doc__)
-    try:
-        assert b_to_frac('00000000') == 0.0,                                        'FAIL : b_to_frac : 0'
-        assert b_to_frac('0101') == 0.3125,                                         'FAIL : b_to_frac : 0'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_to_frac
-    
-    # b_to_str {{{
-    print('\nb_to_str()...')
-    print(b_to_str.__doc__)
-    try:
-        assert b_to_str() == '',                                                    'FAIL : b_to_str : 0'
-        assert b_to_str('') == '',                                                  'FAIL : b_to_str : 1'
-        assert b_to_str('0') == '\x00',                                             'FAIL : b_to_str : 2'
-        assert b_to_str('1') == '\x80',                                             'FAIL : b_to_str : 3'
-        assert b_to_str('01010101') == 'U',                                         'FAIL : b_to_str : 4'
-        assert b_to_str('011000010110001001100011') == 'abc',                       'FAIL : b_to_str : 5'
-        assert b_to_str('0110000101100010011000111') == 'abc\x80',                  'FAIL : b_to_str : 6'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_to_str
-    
-    # b_to_bytes {{{
-    print('\nb_to_bytes()...')
-    print(b_to_bytes.__doc__)
-    try:
-        assert b_to_bytes() == b'',                                                    'FAIL : b_to_bytes : 0'
-        assert b_to_bytes('') == b'',                                                  'FAIL : b_to_bytes : 1'
-        assert b_to_bytes('0') == b'\x00',                                             'FAIL : b_to_bytes : 2'
-        assert b_to_bytes('1') == b'\x80',                                             'FAIL : b_to_bytes : 3'
-        assert b_to_bytes('01010101') == b'U',                                         'FAIL : b_to_bytes : 4'
-        assert b_to_bytes('011000010110001001100011') == b'abc',                       'FAIL : b_to_bytes : 5'
-        assert b_to_bytes('0110000101100010011000111') == b'abc\x80',                  'FAIL : b_to_bytes : 6'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_to_bytes
-    
-    # b_to_baseX {{{
-    print('\nb_to_baseX()...')
-    print(b_to_baseX.__doc__)
-    try:
-        assert b_to_baseX() == 'AA==',                                              'FAIL : baseX_to_b : 0'
-        assert b_to_baseX('') == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
-                                                                                    'FAIL : baseX_to_b : 1'
-        assert b_to_baseX('', base=4) == '0123',                                    'FAIL : baseX_to_b : 2'
-        assert b_to_baseX('', base=8) == '01234567',                                'FAIL : baseX_to_b : 3'
-        assert b_to_baseX('', base=16) == '0123456789ABCDEF',                       'FAIL : baseX_to_b : 4'
-        assert b_to_baseX('', base=32) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',       'FAIL : baseX_to_b : 5'
-        assert b_to_baseX('', base=64) == 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/', \
-                                                                                    'FAIL : baseX_to_b : 6'
-        assert b_to_baseX('00011011', base=4) == '0123',                            'FAIL : baseX_to_b : 7'
-        assert b_to_baseX('000110111', base=4) == '01232000',                       'FAIL : baseX_to_b : 8'
-        assert b_to_baseX('0001101110', base=4) == '01232000',                      'FAIL : baseX_to_b : 9'
-        assert b_to_baseX('000001010011100101110111', base=8) == '01234567',        'FAIL : baseX_to_b : a'
-        assert b_to_baseX('0000010110101111', base=16) == '05AF',                   'FAIL : baseX_to_b : b'
-        assert b_to_baseX('0000010110101111', base=32) == 'AWXQ===',                'FAIL : baseX_to_b : c'
-        assert b_to_baseX(int_to_b(int('14FB9C03D97E', 16), width=48)) == 'FPucA9l+', \
-                                                                                    'FAIL : baseX_to_b : d'
-        assert b_to_baseX(int_to_b(int('14FB9C03D9', 16), width=40)) == 'FPucA9k=', 'FAIL : baseX_to_b : e'
-        assert b_to_baseX(int_to_b(int('14FB9C03', 16), width=32)) == 'FPucAw==',   'FAIL : baseX_to_b : f'
-        assert b_to_baseX(int_to_b(int('14FB9C03', 16), width=32), pad='') == 'FPucAw', \
-                                                                                    'FAIL : baseX_to_b : 10'
-        assert b_to_baseX('00011011', base=4, alphabet='abcd') == 'abcd',           'FAIL : baseX_to_b : 12'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_to_baseX
+    t += '\nb_to_int()...'      + b_to_int.__doc__
+    t += '\nb_to_frac()...'     + b_to_frac.__doc__
+    t += '\nb_to_str()...'      + b_to_str.__doc__
+    t += '\nb_to_bytes()...'    + b_to_bytes.__doc__
+    t += '\nb_to_baseX()...'    + b_to_baseX.__doc__
     
     # }}} End of Convertions From Binary Strings
     
     # Gray Conversion {{{
     
-    # b_bin_to_gray {{{
-    print('\nb_bin_to_gray()...')
-    print(b_bin_to_gray.__doc__)
-    try:
-        assert b_bin_to_gray() == '00000000',                                       'FAIL : b_bin_to_gray : 0'
-        assert b_bin_to_gray('1111') == '1000',                                     'FAIL : b_bin_to_gray : 1'
-        assert b_bin_to_gray('1101', endian='big') == '1011',                       'FAIL : b_bin_to_gray : 2'
-        assert b_bin_to_gray('1101', endian='little') == '0111',                    'FAIL : b_bin_to_gray : 3'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_bin_to_gray
-    
-    # b_gray_to_bin {{{
-    print('\nb_gray_to_bin()...')
-    print(b_gray_to_bin.__doc__)
-    try:
-        assert b_gray_to_bin() == '00000000',                                       'FAIL : b_gray_to_bin : 0'
-        assert b_gray_to_bin('1111') == '1010',                                     'FAIL : b_gray_to_bin : 1'
-        assert b_gray_to_bin('1101', endian='big') == '1001',                       'FAIL : b_gray_to_bin : 2'
-        assert b_gray_to_bin('1101', endian='little') == '1011',                    'FAIL : b_gray_to_bin : 3'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_gray_to_bin
+    t += '\nb_bin_to_gray()...' + b_bin_to_gray.__doc__
+    t += '\nb_gray_to_bin()...' + b_gray_to_bin.__doc__
     
     # }}} End of Gray Conversion
     
     # Arithmetic Operations {{{
     
-    # b_add {{{
-    print('\nb_add()...')
-    print(b_add.__doc__)
-    try:
-        assert b_add() == '000000000',                                              'FAIL : b_add : 0'
-        assert b_add('0001', '0001') == '00010',                                    'FAIL : b_add : 1'
-        assert b_add('0001', '0001', endian='little') == '00001',                   'FAIL : b_add : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_add
-    
-    # b_mul {{{
-    print('\nb_mul()...')
-    print(b_mul.__doc__)
-    try:
-        assert b_mul() == '0000000000000000',                                       'FAIL : b_mul : 0'
-        assert b_mul('0001', '0001') == '00000001',                                 'FAIL : b_mul : 1'
-        assert b_mul('0001', '0001', endian='little') == '00000010',                'FAIL : b_mul : 2'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_mul
+    t += '\nb_add()...' + b_add.__doc__
+    t += '\nb_mul()...' + b_mul.__doc__
     
     # }}} End of Arithmetic Operations
     
     # Miscellaneous Functions {{{
     
-    # b_blockify {{{
-    print('\nb_blockify()...')
-    print(b_blockify.__doc__)
-    try:
-        assert b_blockify() == '',                                                  'FAIL : b_blockify : 0'
-        assert b_blockify('00000000') == '0000 0000',                               'FAIL : b_blockify : 1'
-        assert b_blockify('0'*9) == '0000 0000 0',                                  'FAIL : b_blockify : 2'
-        assert b_blockify('0'*9, pad='x') == '0000 0000 0xxx',                      'FAIL : b_blockify : 3'
-        assert b_blockify('0'*9, pad='x', align='right') == 'xxx0 0000 0000',       'FAIL : b_blockify : 4'
-        assert b_blockify('0'*9, sep='_') == '0000_0000_0',                         'FAIL : b_blockify : 5'
-        assert b_blockify('0'*9, size=3) == '000 000 000',                          'FAIL : b_blockify : 6'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_blockify
-    
-    # b_validate {{{
-    print('\nb_validate()...')
-    print(b_validate.__doc__)
-    try:
-        assert b_validate() == False,                                               'FAIL : b_validate : 0'
-        assert b_validate('') == False,                                             'FAIL : b_validate : 1'
-        assert b_validate('', fail_empty=False) == True,                            'FAIL : b_validate : 2'
-        assert b_validate('01010101') == True,                                      'FAIL : b_validate : 3'
-        assert b_validate('010120101') == False,                                    'FAIL : b_validate : 4'
-        assert b_validate('0101 0101') == False,                                    'FAIL : b_validate : 5'
-    except AssertionError as e:
-        print(e)
-    # }}} End of b_validate
+    t += '\nb_blockify()...'    + b_blockify.__doc__
+    t += '\nb_validate()...'    + b_validate.__doc__
     
     # }}} End of Miscellaneous Functions
     
-# }}} End of run_self_test()
+    return t
+    
+# }}} End of documentation()
 
 if __name__ == '__main__': # {{{
-    run_self_test()
+    print(documentation())
 # }}} End of __main__
