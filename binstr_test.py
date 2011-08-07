@@ -768,6 +768,47 @@ class b_gray_to_bin(unittest.TestCase): # {{{
 # }}} End of Gray Conversion
 
 # Arithmetic Operations {{{
+
+class b_add(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_add(), '000000000')
+    
+    def test_EndianBig(self):       self.assertEqual(b.b_add('0101', '0101', endian='big'), '01010')
+    def test_EndianLittle(self):    self.assertEqual(b.b_add('0101', '0101', endian='little'), '00101')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_add, A=0)
+        self.assertRaises(AssertionError, b.b_add, A='01012000')
+    
+    def test_BadB(self):
+        self.assertRaises(AssertionError, b.b_add, B=0)
+        self.assertRaises(AssertionError, b.b_add, B='01012000')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.b_add, endian=5)
+        self.assertRaises(AssertionError, b.b_add, endian='other')
+# }}} End of b_add
+
+class b_mul(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_mul(), '0000000000000000')
+    
+    def test_EndianBig(self):       self.assertEqual(b.b_mul('0101', '0101', endian='big'), '00011001')
+    def test_EndianLittle(self):    self.assertEqual(b.b_mul('0101', '0101', endian='little'), '00100110')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_mul, A=0)
+        self.assertRaises(AssertionError, b.b_mul, A='01012000')
+    
+    def test_BadB(self):
+        self.assertRaises(AssertionError, b.b_mul, B=0)
+        self.assertRaises(AssertionError, b.b_mul, B='01012000')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.b_mul, endian=5)
+        self.assertRaises(AssertionError, b.b_mul, endian='other')
+# }}} End of b_mul
+
 # }}} End of Arithmetic Operations
 
 # Miscellaneous Functions {{{
