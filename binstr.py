@@ -430,11 +430,26 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
          int_to_b(0xF5, width=7) returns '1110101'
          int_to_b(0xF5, width=7, chop='least') returns '1111010'
     '''
-    assert type(num) is int or type(num) is long, \
-        'Invalid type : num : Expected %(expect)s : %(actual)s' % {
-                                                                   'expect': str(type(int())) + ' OR ' + str(type(long())),
-                                                                   'actual': str(type(num)),
-                                                                  }
+    # Python3 has got rid of the long type so treat it a bit differently.
+    try:
+        assert type(num) is int, \
+            'Invalid type : num : Expected %(expect)s : %(actual)s' % {
+                                                                       'expect': str(type(int())),
+                                                                       'actual': str(type(num)),
+                                                                      }
+    except AssertionError:
+        from sys import version_info as vinf
+        if vinf[0] <= 2:
+            assert type(num) is long, \
+                'Invalid type : num : Expected %(expect)s : %(actual)s' % {
+                                                                           'expect': str(type(int())) + ' OR ' + str(type(long())),
+                                                                           'actual': str(type(num)),
+                                                                          }
+        else:
+            raise
+    finally:
+        try: del vinf
+        except: pass
     
     assert num >= 0, \
         'Invalid value : num : Expected %(expect)s : %(actual)s' % {
