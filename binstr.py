@@ -1259,9 +1259,9 @@ def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad=
 
 # Encoding Conversion {{{
 
-def b_bin_to_gray(A='00000000', endian='big'): # {{{
+def b_base2_to_gray(A='00000000', endian='big'): # {{{
     '''
-    Convert from binary coding to Gray coding.
+    Convert from base2 coding to Gray coding.
     
     The returned string will always be the same length as the input string.
     Both the input and output strings will have the same bit-endianness,
@@ -1295,11 +1295,11 @@ def b_bin_to_gray(A='00000000', endian='big'): # {{{
     if endian == 'little': g = g[::-1] # Convert back to little endian if necessary
     
     return g
-    # }}} End of b_bin_to_gray()
+    # }}} End of b_base2_to_gray()
 
-def b_gray_to_bin(A='00000000', endian='big'): # {{{
+def b_gray_to_base2(A='00000000', endian='big'): # {{{
     '''
-    Convert from Gray coding to binary coding.
+    Convert from Gray coding to base2 coding.
     
     The returned string will always be the same length as the input string.
     Both the input and output strings will have the same bit-endianness,
@@ -1335,11 +1335,11 @@ def b_gray_to_bin(A='00000000', endian='big'): # {{{
     if endian == 'little': b = b[::-1] # Convert back to little endian if necessary
     
     return b
-    # }}} End of b_gray_to_bin()
+    # }}} End of b_gray_to_base2()
 
-def b_bin_to_eliasg(A='1', endian='big'): # {{{
+def b_base2_to_eliasg(A='1', endian='big'): # {{{
     '''
-    Convert from binary coding to Elias-Gamma coding.
+    Convert from base2 coding to Elias-Gamma coding.
     
     Elias-Gamma cannot code zero or negative numbers.
     
@@ -1381,7 +1381,7 @@ def b_bin_to_eliasg(A='1', endian='big'): # {{{
     if endian == 'little': t = t[::-1] # Convert back to little endian if necessary
     
     return t
-    # }}} End of b_bin_to_eliasg()
+    # }}} End of b_base2_to_eliasg()
 
 # }}} End of Encoding Conversion
 
