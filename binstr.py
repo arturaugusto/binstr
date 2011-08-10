@@ -1257,7 +1257,7 @@ def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad=
 
 # }}} End of Convertions From Binary Strings
 
-# Gray Conversion {{{
+# Encoding Conversion {{{
 
 def b_bin_to_gray(A='00000000', endian='big'): # {{{
     '''
@@ -1337,7 +1337,53 @@ def b_gray_to_bin(A='00000000', endian='big'): # {{{
     return b
     # }}} End of b_gray_to_bin()
 
-# }}} End of Gray Conversion
+def b_bin_to_eliasg(A='1', endian='big'): # {{{
+    '''
+    Convert from binary coding to Elias-Gamma coding.
+    
+    Elias-Gamma cannot code zero or negative numbers.
+    
+    Both the input and output strings will have the same bit-endianness,
+      which can be specifed with the endian argument.
+    The length of the returned string will vary.
+    
+    E.g. b_bin_to_eliasg() returns '1'
+         b_bin_to_eliasg('1111') returns '0001111'
+         b_bin_to_eliasg('1101', endian='big') returns '0001101'
+         b_bin_to_eliasg('1101', endian='little') returns '1011000'
+    '''
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    
+    if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
+    
+    A = A.lstrip('0')
+    assert len(A) > 0, \
+        'Invalid value : A : Expected %(expect)s : %(actual)s' % {
+                                                                  'expect': 'A > 0',
+                                                                  'actual': str(A),
+                                                                 }
+    
+    t = '0'*(len(A) - 1) + A
+    
+    if endian == 'little': t = t[::-1] # Convert back to little endian if necessary
+    
+    return t
+    # }}} End of b_bin_to_eliasg()
+
+# }}} End of Encoding Conversion
 
 # Arithmetic Operations {{{
 

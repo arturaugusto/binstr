@@ -725,7 +725,7 @@ class b_to_baseX(unittest.TestCase): # {{{
 
 # }}} End of Convertions From Binary Strings
 
-# Gray Conversion {{{
+# Encoding Conversion {{{
 
 class b_bin_to_gray(unittest.TestCase): # {{{
     
@@ -765,7 +765,26 @@ class b_gray_to_bin(unittest.TestCase): # {{{
         self.assertRaises(AssertionError, b.b_gray_to_bin, A='0', endian='other')
 # }}} End of b_gray_to_bin
 
-# }}} End of Gray Conversion
+class b_bin_to_eliasg(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_bin_to_eliasg(), '1')
+    
+    def test_AllOnes(self):         self.assertEqual(b.b_bin_to_eliasg('1111'), '0001111')
+    def test_LeadingZeros(self):    self.assertEqual(b.b_bin_to_eliasg('0001111'), '0001111')
+    
+    def test_EndianBig(self):       self.assertEqual(b.b_bin_to_eliasg('1101', endian='big'), '0001101')
+    def test_EndianLittle(self):    self.assertEqual(b.b_bin_to_eliasg('1101', endian='little'), '1101000')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_bin_to_gray, A=0)
+        self.assertRaises(AssertionError, b.b_bin_to_gray, A='01012000')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.b_bin_to_gray, A='0', endian=5)
+        self.assertRaises(AssertionError, b.b_bin_to_gray, A='0', endian='other')
+# }}} End of b_bin_to_eliasg
+
+# }}} End of Encoding Conversion
 
 # Arithmetic Operations {{{
 
