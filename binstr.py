@@ -1383,6 +1383,110 @@ def b_base2_to_eliasg(A='1', endian='big'): # {{{
     return t
     # }}} End of b_base2_to_eliasg()
 
+def b_eliasg_to_base2(A='0', width=0, chop='most', endian='big'): # {{{
+    '''
+    Convert from Elias-Gamma coding to base2 coding.
+    This function returns a list of b_strings.
+    
+    When a sequence of digits is reached that cannot be decoded, a None
+      will be appended to the end of the list.
+    
+    If width is set to 0 then the minimum width to represent that number
+      will be used.
+    The width can be set to an arbitrary value but defaults to 0.
+    If the width is less than the number of bits required to represent the
+      number then the chop parameter decides what end to chop the bits off.
+    Clearly, chop is only relevant when the width is specified to be less
+      then the width of num.
+    
+    Both the input and output strings will have the same bit-endianness,
+      which can be specifed with the endian argument.
+    
+    E.g. b_eliasg_to_bin() returns [None]
+         b_eliasg_to_bin('1') returns ['1']
+         b_eliasg_to_bin('010') returns ['10']
+         b_eliasg_to_bin('0001011) returns ['1011']
+         b_eliasg_to_bin('00010110') returns ['1011', None]
+         b_eliasg_to_bin('0001011010', width=0) returns ['1011', '10']
+         b_eliasg_to_bin('0001011010', width=8) returns ['00001011', '00000010']
+         b_eliasg_to_bin('0001011010', width=3) returns ['011', '010']
+         b_eliasg_to_bin('0001011010', width=3, chop='least') returns ['101', '010']
+         b_eliasg_to_bin('0101101000', endian='little') returns ['1101', '01']
+    '''
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    
+    assert type(width) is int, \
+        'Invalid type : width : Expected %(expect)s : %(actual)s' % {
+                                                                     'expect': str(type(int())),
+                                                                     'actual': str(type(width)),
+                                                                    }
+    
+    assert width >= 0, \
+        'Invalid value : width : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': 'width >= 0',
+                                                                      'actual': str(width),
+                                                                     }
+    
+    assert type(chop) is str, \
+        'Invalid type : chop : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': str(type(str())),
+                                                                    'actual': str(type(chop)),
+                                                                   }
+    
+    assert chop == 'most' or chop == 'least', \
+        'Invalid value: chop : Expected %(expect)s : %(actual)s' % {
+                                                                    'expect': '"most" OR "least"',
+                                                                    'actual': str(chop),
+                                                                   }
+    
+    if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
+    
+    t = []
+    i = 0
+    lA = len(A)
+    b = ''
+    while lA > 0:
+        i_offset = i + i + 1
+
+        # Show that the last digits could not be sensibly decoded
+        if (i_offset > (lA)):
+            t.append(None)
+            break
+        
+        if A[i] == '1':
+            b = A[i:i_offset]
+            # Adjust b for width/chop
+            if width > 0:
+                if len(b) > width:
+                    if   chop == 'most': b = b[(-1 * width):]   # Remove most significant bits
+                    elif chop == 'least': b = b[:width]         # Remove least significant bits
+                else: b = '0'*(width - len(b)) + b      # Add padding zeros
+            
+            if endian == 'little': b = b[::-1] # Convert back to little endian if necessary
+            t.append(b)
+            
+            A = A[i_offset:] # Pop the number off A
+            lA -= i_offset # We don't want to keep having to iterate over the string so keep length as a separate state
+            i = 0 # Reset the index counter
+        else:
+            i += 1
+    
+    return t
+    # }}} End of b_eliasg_to_base2()
+
 # }}} End of Encoding Conversion
 
 # Arithmetic Operations {{{
@@ -1635,12 +1739,15 @@ def documentation(): # {{{
     
     # }}} End of Convertions From Binary Strings
     
-    # Gray Conversion {{{
+    # Encoding Conversion {{{
     
-    t += '\nb_bin_to_gray()...' + b_bin_to_gray.__doc__
-    t += '\nb_gray_to_bin()...' + b_gray_to_bin.__doc__
+    t += '\nb_base2_to_gray()...' + b_base2_to_gray.__doc__
+    t += '\nb_gray_to_base2()...' + b_gray_to_base2.__doc__
+     
+    t += '\nb_base2_to_eliasg()...' + b_base2_to_eliasg.__doc__
+    t += '\nb_eliasg_to_base2()...' + b_eliasg_to_base2.__doc__
     
-    # }}} End of Gray Conversion
+    # }}} End of Encoding Conversion
     
     # Arithmetic Operations {{{
     

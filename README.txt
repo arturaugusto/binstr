@@ -35,14 +35,16 @@ Includes:
     baseX_to_b()    - Convert from another base (4, 8, 16, 32 or 64) to binary coding.
     
     b_to_int()      - Convert from base2 binary coding to an integer.
-    b_to_frac()      - Convert from base2 binary coding to an float less than 1.0.
+    b_to_frac()     - Convert from base2 binary coding to an float less than 1.0.
     b_to_str()      - Convert from binary coding to a string of ASCII characters.
     b_to_bytes()    - Convert from binary coding to a byte sequence.
                       In Python 2.x this is the same as b_to_str().
     b_to_baseX()    - Convert from binary coding to another base (4, 8, 16, 32 or 64).
     
-    b_bin_to_gray() - Convert binary code into gray code
-    b_gray_to_bin() - Convert gray code into binary code
+    b_base2_to_gray() - Convert base2 code into gray code
+    b_gray_to_base2() - Convert gray code into base2 code
+    b_base2_to_eliasg() - Convert base2 code into Elias Gamma code
+    b_eliasg_to_base2() - Convert Elias Gamma code into base2 code
     
     b_add()         - Perform an ADD operation
     b_mul()         - Perform a MUL operation (multiply)
@@ -105,20 +107,27 @@ Rejected funtions include:
     b_rotl, b_rotr - Use Python slices
     b_reverse - Use <string>[::-1] E.g. '0101'[::-1] returns '1010'
 
+The next version should probably be 2.0 instead of 1.4 since backward compatibility
+  will not be maintained.
+Some of the function names and parameters were starting to not make sense.
+
 Stuff on my TODO list for next version include:
     1. Make some of the functions a bit more efficient by using map(), reduce() and filter().
        None of the functions have been written with speed as a top priority so some are pretty
        poor in terms of efficiency.
     
-    2. Add functions for other binary encodings apart from standard base2 and Gray.
-       These would (maybe) include signed/unsigned exponential, signed/unsigned interleaved
-       exponential, Fibonacci, Rice, Golomb, Levenshtein, and Huffman coding.
-       I'm not quite sure what else should be added like that just now.
+    2. Add b_eliasd_to_base2()and b_base2_to_eliasd().
+    3. Add b_eliaso_to_base2()and b_base2_to_eliaso().
+    4. Add b_fib_to_base2()and b_base2_to_fib().
+    5. Maybe add support for Rice, Golomb, Levenstein, exponential, interleaved exponential.
+    6. Maybe add support for Huffman and other error detection/correction schemes.
+    7. Change int_to_b() to uint_to_b() and add sint_to_b().
+    8. Alter the behaviour of width in uint_to_b().
+    9. Add b_split(), similar to b_blockify() but put into a list.
+    10. Add b_width() to pad force b_strings to a certain width.
+    11. Use a better documentation setup. Probably using Sphinx. That function looks bad in the namespace.
+    12. Start work on binimg (or whatever I'll end up calling it).
     
-    3. Add Two's Compliment function and One's(?).
-       I know it's so trivial I could just put it in now but
-       it seems nicer to leave it till version 1.4.
-
 If anybody has any tips, advice or general abuse concerning Binstr then please feel
 free to send me an email or even get on GitHub and contribute.
 

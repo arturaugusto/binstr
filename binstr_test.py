@@ -784,6 +784,46 @@ class b_base2_to_eliasg(unittest.TestCase): # {{{
         self.assertRaises(AssertionError, b.b_base2_to_eliasg, A='0', endian='other')
 # }}} End of b_base2_to_eliasg
 
+class b_eliasg_to_base2(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_eliasg_to_base2(), [None])
+    
+    def test_One(self):             self.assertEqual(b.b_eliasg_to_base2('1'), ['1'])
+    def test_Two(self):             self.assertEqual(b.b_eliasg_to_base2('010'), ['10'])
+    def test_Three(self):           self.assertEqual(b.b_eliasg_to_base2('011'), ['11'])
+    def test_Eleven(self):          self.assertEqual(b.b_eliasg_to_base2('0001011'), ['1011'])
+    
+    def test_BadSeq0(self):         self.assertEqual(b.b_eliasg_to_base2('00010110'), ['1011', None])
+    def test_BadSeq1(self):         self.assertEqual(b.b_eliasg_to_base2('00010100'), ['1010', None])
+    def test_BadSeq2(self):         self.assertEqual(b.b_eliasg_to_base2('00010100000000000'), ['1010', None])
+    
+    def test_EndianBig(self):       self.assertEqual(b.b_eliasg_to_base2('0001011010', endian='big'), ['1011', '10'])
+    def test_EndianLittle(self):    self.assertEqual(b.b_eliasg_to_base2('0101101000', endian='little'), ['1101', '01'])
+    
+    def test_WidthZero(self):       self.assertEqual(b.b_eliasg_to_base2('0001011010', width=0), ['1011', '10'])
+    def test_WidthLarge(self):      self.assertEqual(b.b_eliasg_to_base2('0001011010', width=8), ['00001011', '00000010'])
+    def test_WidthSmall(self):      self.assertEqual(b.b_eliasg_to_base2('0001011010', width=3), ['011', '010'])
+    
+    def test_ChopLeast(self):       self.assertEqual(b.b_eliasg_to_base2('0001011010', width=3, chop='least'), ['101', '010'])
+    def test_ChopMost(self):        self.assertEqual(b.b_eliasg_to_base2('0001011010', width=3, chop='most'), ['011', '010'])
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_eliasg_to_base2, A=0)
+        self.assertRaises(AssertionError, b.b_eliasg_to_base2, A='01012000')
+    
+    def test_BadWidth(self):
+        self.assertRaises(AssertionError, b.b_eliasg_to_base2, width=-5)
+        self.assertRaises(AssertionError, b.b_eliasg_to_base2, width='5')
+    
+    def test_BadChop(self):
+        self.assertRaises(AssertionError, b.b_eliasg_to_base2, chop=5)
+        self.assertRaises(AssertionError, b.b_eliasg_to_base2, chop='other')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.b_eliasg_to_base2, A='0', endian=5)
+        self.assertRaises(AssertionError, b.b_eliasg_to_base2, A='0', endian='other')
+# }}} End of b_eliasg_to_base2
+
 # }}} End of Encoding Conversion
 
 # Arithmetic Operations {{{
