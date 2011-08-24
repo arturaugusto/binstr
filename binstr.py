@@ -943,10 +943,17 @@ def b_to_int(A='0', endian='big'): # {{{
                                                                       'expect': '"little" OR "big"',
                                                                       'actual': str(endian),
                                                                      }
-    t = ''
-    if endian == 'big': t = A
-    else:               t = A[::-1]
-    return int(t, 2)
+    b = ''
+    if endian == 'big': b = A[::-1]
+    else:               b = A
+    
+    i = 0
+    t = 0
+    for c in b:
+        if c == '1': t += 2**i
+        i += 1
+    
+    return t
     # }}} End of b_to_int()
 
 def b_to_frac(A='0', endian='big'): # {{{
