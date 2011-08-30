@@ -1038,7 +1038,7 @@ def b_to_str(A='', align='left', b_pad='0'): # {{{
     else:               A = b_pad * ((8 - (len(A) % 8)) % 8) + A
     
     t = ''
-    for i in range(0, len(A), 8): t += chr(int(A[i:i+8], 2))
+    for i in range(0, len(A), 8): t += chr(b_to_int(A[i:i+8]))
        
     return t
     # }}} End of b_to_str()
@@ -1094,7 +1094,7 @@ def b_to_bytes(A='', align='left', b_pad='0'): # {{{
         else:               A = b_pad * ((8 - (len(A) % 8)) % 8) + A
         
         t = []
-        for i in range(0, len(A), 8): t.append(int(A[i:i+8], 2))
+        for i in range(0, len(A), 8): t.append(b_to_int(A[i:i+8]))
         
         return bytes(t)
     # }}} End of b_to_bytes()
@@ -1253,7 +1253,7 @@ def b_to_baseX(A='00000000', base=64, alphabet='', pad='=', align='left', b_pad=
     
     # Generate string of new base.
     t = ''
-    for i in range(0, lA_c, bits_per_char): t += alphabet[int(Ac[i:i+bits_per_char], 2)]
+    for i in range(0, lA_c, bits_per_char): t += alphabet[b_to_int(Ac[i:i+bits_per_char])]
     del i, A, Ac, lA_c, bits_per_char
     
     # Add padding
@@ -1297,7 +1297,7 @@ def b_base2_to_gray(A='00000000', endian='big'): # {{{
     if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
     
     g = A[0]
-    for i in range(1, len(A)): g += str( int(A[i-1] != A[i]) )
+    for i in range(1, len(A)): g += b_lxor(A[i-1:i+1])
     
     if endian == 'little': g = g[::-1] # Convert back to little endian if necessary
     
@@ -1335,9 +1335,7 @@ def b_gray_to_base2(A='00000000', endian='big'): # {{{
     if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
     
     b = A[0]
-    for i in range(1, len(A)): b += str( int(b[i-1] != A[i]) )
-    
-    assert len(A) == len(b), 'Error in this function! len(A) must equal len(b). Oh dear.'
+    for i in range(1, len(A)): b += b_lxor(b[i-1] + A[i])
     
     if endian == 'little': b = b[::-1] # Convert back to little endian if necessary
     
@@ -1538,7 +1536,7 @@ def b_add(A='00000000', B='00000000', endian='big'): # {{{
     if len(A) >= len(B): l = A
     else:                l = B
     
-    return int_to_b(num=(int(A, 2) + int(B, 2)), width=(len(l) + 1), endian=endian, chop='most')
+    return int_to_b(num=(b_to_int(A) + b_to_int(B)), width=(len(l) + 1), endian=endian, chop='most')
     # }}} End of b_add()
 
 def b_mul(A='00000000', B='00000000', endian='big'): # {{{
@@ -1579,7 +1577,7 @@ def b_mul(A='00000000', B='00000000', endian='big'): # {{{
     if len(A) >= len(B): l = A
     else:                l = B
     
-    return int_to_b(num=(int(A, 2) * int(B, 2)), width=(len(l) * 2), endian=endian, chop='most')
+    return int_to_b(num=(b_to_int(A) * b_to_int(B)), width=(len(l) * 2), endian=endian, chop='most')
     # }}} End of b_mul()
 
 # }}} End of Arithmetic Operations
