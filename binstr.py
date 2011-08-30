@@ -1691,7 +1691,6 @@ def b_validate(A='', fail_empty=True): # {{{
         from re import compile as re_compile
         pattern = re_compile('[^01]')
         t = not( bool(pattern.search(A)) )
-        del re_compile, pattern
     
     return t
     # }}} End of b_validate()
