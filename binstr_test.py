@@ -281,8 +281,8 @@ class b_lnxor(unittest.TestCase): # {{{
 
 class int_to_b(unittest.TestCase): # {{{
     
-    def test_NoArgs(self):          self.assertEqual(b.int_to_b(), '00000000')
-    def test_OnlyNum(self):         self.assertEqual(b.int_to_b(5), '00000101')
+    def test_NoArgs(self):          self.assertEqual(b.int_to_b(), '0')
+    def test_OnlyNum(self):         self.assertEqual(b.int_to_b(5), '101')
     def test_WidthLarge(self):      self.assertEqual(b.int_to_b(0xF5, width=10), '0011110101')
     def test_WidthSmall(self):      self.assertEqual(b.int_to_b(0xF5, width=2), '01')
     def test_EndianBig(self):       self.assertEqual(b.int_to_b(0xF5, endian='big'), '11110101')

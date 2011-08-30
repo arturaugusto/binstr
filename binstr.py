@@ -406,15 +406,16 @@ def b_lnxor(A='0'): #{{{
 
 # Convertions To Binary Strings {{{
 
-def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
+def int_to_b(num=0, width=0, endian='big', chop='most'): # {{{
     '''
     Convert a positive integer to a binary string.
     
-    The width can be set to an arbitrary value but defaults to 8.
-    If the width is less than the number of bits required to represent num
-      then only the least significant bits are returned.
-    However, by setting chop to 'least' only the most significant bits are
-      returned.
+    If width is set to 0 then the minimum width to represent that number
+      will be used.
+    If the width is 0 and num is 0 then just a single '0' will be returned.
+    The width can be set to an arbitrary value but defaults to 0.
+    If the width is less than the number of bits required to represent the
+      number then the chop parameter decides what end to chop the bits off.
     Clearly, chop is only relevant when the width is specified to be less
       then the width of num.
     
@@ -424,8 +425,8 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     The returned string is can be converted to an int in Python by setting
       the base to 2 e.g.:'int( int_to_b(...) , 2 )'.
        
-    E.g. int_to_b() returns '00000000'
-         int_to_b(5) returns '00000101'
+    E.g. int_to_b() returns '0'
+         int_to_b(5) returns '101'
          int_to_b(0xF5, width=10, endian='little') returns '1010111100'
          int_to_b(0xF5, width=7) returns '1110101'
          int_to_b(0xF5, width=7, chop='least') returns '1111010'
@@ -502,13 +503,15 @@ def int_to_b(num=0, width=8, endian='big', chop='most'): # {{{
     t = b[::-1]
     del a, b
     
-    if len(t) > width:
-        if   chop == 'most': t = t[(-1 * width):]   # Remove most significant bits
-        elif chop == 'least': t = t[:width]         # Remove least significant bits
-    else: t = '0'*(width - len(t)) + t      # Add padding zeros
+    if width > 0:
+        if len(t) > width:
+            if   chop == 'most': t = t[(-1 * width):]   # Remove most significant bits
+            elif chop == 'least': t = t[:width]         # Remove least significant bits
+        else: t = '0'*(width - len(t)) + t      # Add padding zeros
     
     if endian == 'little': t = t[::-1]         # Reverse the string
     
+    if len(t) < 1: t += '0'
     return t
     # }}} End of int_to_b()
 
