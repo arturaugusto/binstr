@@ -2,6 +2,9 @@
 
 ###########################################################################
 # Copyright (C) 2011  David McEwan
+#
+#     Binstr: A collection of utility functions for creating and operating
+#     on strings of binary digits.
 # 
 #     This program is free software: you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by
@@ -17,8 +20,6 @@
 #     along with this program. If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-# This file contains some utility functions for creating and operating
-#   on strings of binary digits.
 # It is not intended to be the fastest or most efficient.
 # It has been designed to be completely predictable, i.e. Strange inputs
 #   will cause an AssertionError to be raised.
@@ -1698,5 +1699,5 @@ def b_validate(A='', fail_empty=True): # {{{
 # }}} End of Miscellaneous Functions
 
 if __name__ == '__main__': # {{{
-    print(documentation())
+    pass
 # }}} End of __main__
