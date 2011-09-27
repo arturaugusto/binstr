@@ -1496,6 +1496,55 @@ def b_eliasg_to_base2(A='0', width=0, chop='most', endian='big'): # {{{
     return t
     # }}} End of b_eliasg_to_base2()
 
+def b_base2_to_eliasd(A='1', endian='big'): # {{{
+    '''
+    Convert from base2 coding to Elias-Delta coding.
+    
+    Elias-Delta cannot code zero or negative numbers.
+    
+    Both the input and output strings will have the same bit-endianness,
+      which can be specifed with the endian argument.
+    The length of the returned string will vary.
+    
+    E.g. b_bin_to_eliasd() returns '1'
+         b_bin_to_eliasd('1111') returns '00100111'
+         b_bin_to_eliasd('1101', endian='big') returns '00100101'
+         b_bin_to_eliasd('1101', endian='little') returns '10100100'
+    '''
+    assert b_validate(A) == True, \
+        'Invalid b_string : A : %(actual)s' % {'actual': str(A)}
+    
+    assert type(endian) is str, \
+        'Invalid type : endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': str(type(str())),
+                                                                      'actual': str(type(endian)),
+                                                                     }
+    
+    assert endian == 'little' or endian == 'big', \
+        'Invalid value: endian : Expected %(expect)s : %(actual)s' % {
+                                                                      'expect': '"little" OR "big"',
+                                                                      'actual': str(endian),
+                                                                     }
+    
+    if endian == 'little': A = A[::-1] # Make sure endianness is big before conversion
+    
+    A = A.lstrip('0')
+    lA = len(A)
+    assert lA > 0, \
+        'Invalid value : A : Expected %(expect)s : %(actual)s' % {
+                                                                  'expect': 'A > 0',
+                                                                  'actual': str(A),
+                                                                 }
+    
+    X = int_to_b(lA)
+    lX = len(X)
+    t = '0'*(lX - 1) + X + A[1:]
+    
+    if endian == 'little': t = t[::-1] # Convert back to little endian if necessary
+    
+    return t
+    # }}} End of b_base2_to_eliasd()
+
 # }}} End of Encoding Conversion
 
 # Arithmetic Operations {{{
