@@ -824,6 +824,25 @@ class b_eliasg_to_base2(unittest.TestCase): # {{{
         self.assertRaises(AssertionError, b.b_eliasg_to_base2, A='0', endian='other')
 # }}} End of b_eliasg_to_base2
 
+class b_base2_to_eliasd(unittest.TestCase): # {{{
+    
+    def test_NoArgs(self):          self.assertEqual(b.b_base2_to_eliasd(), '1')
+    
+    def test_AllOnes(self):         self.assertEqual(b.b_base2_to_eliasd('1111'), '00100111')
+    def test_LeadingZeros(self):    self.assertEqual(b.b_base2_to_eliasd('0001111'), '00100111')
+    
+    def test_EndianBig(self):       self.assertEqual(b.b_base2_to_eliasd('1101', endian='big'), '00100101')
+    def test_EndianLittle(self):    self.assertEqual(b.b_base2_to_eliasd('1101', endian='little'), '11000100')
+    
+    def test_BadA(self):
+        self.assertRaises(AssertionError, b.b_base2_to_eliasd, A=0)
+        self.assertRaises(AssertionError, b.b_base2_to_eliasd, A='01012000')
+    
+    def test_BadEndian(self):
+        self.assertRaises(AssertionError, b.b_base2_to_eliasd, A='0', endian=5)
+        self.assertRaises(AssertionError, b.b_base2_to_eliasd, A='0', endian='other')
+# }}} End of b_base2_to_eliasg
+
 # }}} End of Encoding Conversion
 
 # Arithmetic Operations {{{
